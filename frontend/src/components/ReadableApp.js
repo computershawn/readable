@@ -184,7 +184,7 @@ class ReadableApp extends Component {
       <div className="Readable-App" style={{paddingLeft:'24px', paddingRight:'24px'}}>
         <h2>readable</h2>
         <div className="temp-style">
-          <button onClick={this.openPostModal(true)} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
+          <button onClick={()=>this.openPostModal(true)} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
         </div>
         <div className="sort-options">
           <span>Sort By | </span>

@@ -25,7 +25,7 @@ class SinglePost extends Component {
     let { post, onVote, onSelectPost } = this.props
     return (
       <div key={post.id} className="post-block">
-        <h4 className="post-title" onClick={()=>onSelectPost(post.id)}>{post.title}</h4>
+        <h4 className="post-title"><a href="/" onClick={()=>onSelectPost(post.id)}>{post.title}</a></h4>
         <div className="post-icon-bar">
           <UserIcon className="post-icon" size={'1em'} /><span className="info-style">{post.author}</span>
           <CalendarIcon className="post-icon" size={'1em'} /><span className="info-style">{convertDate(post.timestamp)}</span>
