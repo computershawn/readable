@@ -1,15 +1,10 @@
-//export const ADD_RECIPE = 'ADD_RECIPE'
-//export const REMOVE_FROM_CALENDAR = 'REMOVE_FROM_CALENDAR'
 export const ADD_POST = 'ADD_POST'
 export const REMOVE_POST = 'REMOVE_POST'
-// export const UPVOTE_ITEM = 'UPVOTE_ITEM'
-// export const DOWNVOTE_ITEM = 'DOWNVOTE_ITEM'
 export const VOTE_POST = 'VOTE_POST'
 export const ADD_COMMENT = 'ADD_COMMENT'
 export const REMOVE_COMMENT = 'REMOVE_COMMENT'
-// export const UPVOTE_COMMENT = 'UPVOTE_COMMENT'
-// export const DOWNVOTE_COMMENT = 'DOWNVOTE_COMMENT'
 export const VOTE_COMMENT = 'VOTE_COMMENT'
+export const ADJUST_COUNT = 'ADJUST_COUNT'
 export const POSTS_FETCH_DATA_SUCCESS = 'POSTS_FETCH_DATA_SUCCESS'
 export const CATS_FETCH_DATA_SUCCESS = 'CATS_FETCH_DATA_SUCCESS'
 export const COMMENTS_FETCH_DATA_SUCCESS = 'COMMENTS_FETCH_DATA_SUCCESS'
@@ -17,49 +12,8 @@ export const COMMENTS_FETCH_DATA_SUCCESS = 'COMMENTS_FETCH_DATA_SUCCESS'
 
 
 
-// Example code from https://codepen.io/stowball/post/a-dummy-s-guide-to-redux-and-thunk-in-react
-// export function itemsFetchData(url) {
-//     return (dispatch) => {
-//         dispatch(itemsIsLoading(true));
-//
-//         fetch(url)
-//             .then((response) => {
-//                 if (!response.ok) {
-//                     throw Error(response.statusText);
-//                 }
-//
-//                 dispatch(itemsIsLoading(false));
-//
-//                 return response;
-//             })
-//             .then((response) => response.json())
-//             .then((items) => dispatch(itemsFetchDataSuccess(items)))
-//             .catch(() => dispatch(itemsHasErrored(true)));
-//     };
-// }
-
-
-
-
-export function postsFetchData() {
-  const postsURL = `${process.env.REACT_APP_BACKEND}/posts`;
-  return (dispatch) => {
-      fetch(postsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-        .then((res) => { return res.json() })
-        .then((posts) => dispatch(postsFetchDataSuccess(posts)))
-        .then(() => dispatch(catsFetchData()));
-  };
-}
-
-export function postsFetchDataSuccess(posts) {
-    return {
-        type: POSTS_FETCH_DATA_SUCCESS,
-        posts
-    };
-}
-
+// ------------ CATEGORIES-SPECIFIC ACTIONS ------------>
 export function catsFetchData() {
-  //console.log("getting categories")
   const catsURL = `${process.env.REACT_APP_BACKEND}/categories`;
   return (dispatch) => {
       fetch(catsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
@@ -75,20 +29,25 @@ export function catsFetchDataSuccess(categories) {
     };
 }
 
-export function commentsFetchData(postID) {
-  const commentsURL = `${process.env.REACT_APP_BACKEND}/posts/${postID}/comments`;
+
+
+
+// ------------ POST-SPECIFIC ACTIONS ------------>
+export function postsFetchData() {
+  const postsURL = `${process.env.REACT_APP_BACKEND}/posts`;
   return (dispatch) => {
-      fetch(commentsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
+      fetch(postsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
         .then((res) => { return res.json() })
-        .then((comments) => dispatch(commentsFetchDataSuccess(comments)));
+        .then((posts) => dispatch(postsFetchDataSuccess(posts)))
+        .then(() => dispatch(catsFetchData()));
   };
 }
 
-export function commentsFetchDataSuccess(comments) {
-  return {
-      type: COMMENTS_FETCH_DATA_SUCCESS,
-      comments
-  };
+export function postsFetchDataSuccess(posts) {
+    return {
+        type: POSTS_FETCH_DATA_SUCCESS,
+        posts
+    };
 }
 
 export function addPost ({ id,timestamp,title,body,author,category }) {
@@ -113,20 +72,6 @@ export function removePost ({ id }) {
      }
 }
 
-// export function upVoteItem ({ id }) {
-//   return {
-//     type: UPVOTE_ITEM,
-//     id
-//   }
-// }
-//
-// export function downVoteItem ({ id }) {
-//   return {
-//     type: DOWNVOTE_ITEM,
-//     id
-//   }
-// }
-
 export function votePost ({ id, up }) {
   return {
     type: VOTE_POST,
@@ -135,16 +80,35 @@ export function votePost ({ id, up }) {
   }
 }
 
-// export function votePost ({ id, direction }) {
-//   return {
-//     type: DOWNVOTE_ITEM,
-//     id: id,
-//     direction: direction
-//   }
-// }
+export function adjustCommentCount ({ id, up }) {
+  return {
+    type: ADJUST_COUNT,
+    id,
+    up
+  }
+}
 
 
-export function addComment ({ id,parentId,timestamp,body,author,voteScore,deleted,parentDeleted }) {
+
+
+// ------------ COMMENT-SPECIFIC ACTIONS ------------>
+export function commentsFetchData(postID) {
+  const commentsURL = `${process.env.REACT_APP_BACKEND}/posts/${postID}/comments`;
+  return (dispatch) => {
+      fetch(commentsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
+        .then((res) => { return res.json() })
+        .then((comments) => dispatch(commentsFetchDataSuccess(comments)));
+  };
+}
+
+export function commentsFetchDataSuccess(comments) {
+  return {
+      type: COMMENTS_FETCH_DATA_SUCCESS,
+      comments
+  };
+}
+
+export function addComment ({ id,parentId,timestamp,body,author }) {
   return {
     type: ADD_COMMENT,
     id,
@@ -152,9 +116,9 @@ export function addComment ({ id,parentId,timestamp,body,author,voteScore,delete
     timestamp,
     body,
     author,
-    voteScore,
-    deleted,
-    parentDeleted
+    voteScore:0,
+    deleted:false,
+    parentDeleted:false
   }
 }
 
@@ -164,20 +128,6 @@ export function removeComment ({ id }) {
     id
   }
 }
-
-// export function upVoteComment ({ id }) {
-//   return {
-//     type: UPVOTE_COMMENT,
-//     id
-//   }
-// }
-//
-// export function downVoteComment ({ id }) {
-//   return {
-//     type: DOWNVOTE_COMMENT,
-//     id
-//   }
-// }
 
 export function voteComment ({ id, up }) {
   return {

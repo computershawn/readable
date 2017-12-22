@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import StarIcon from 'react-icons/lib/md/star-outline'
 import UserIcon from 'react-icons/lib/md/account-circle'
 import CalendarIcon from 'react-icons/lib/md/date-range'

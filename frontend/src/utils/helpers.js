@@ -8,3 +8,9 @@ export function convertDate( timestamp = Date.now()) {
   let formatted = weekdays[d.getDay()].substring(0,3) + " " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear()
   return formatted
 }
+
+
+export function capitalize(string)
+{
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

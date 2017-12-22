@@ -2,10 +2,11 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background: #fdfdfd;
 }
 
 .post-wrapper, .posts-wrapper {
-  margin-left: 24px;
+  /* margin-left: 24px; */
 }
 
 .post-block {
@@ -52,12 +53,26 @@ hr.category-title {
 
 .category-title {
   cursor: pointer;
+  margin-left: 8px;
 }
 
 .post-icon-bar {
   border-top: 1px solid #d6d6d6;
   padding-top: .7em;
   padding-bottom: .2em;
+}
+
+.comment-icon-bar {
+  border-top: 1px solid #ececec;
+  border-bottom: 1px solid #d6d6d6;
+  padding-top: .7em;
+  padding-bottom: .75em;
+}
+
+.comments-sec-title {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: .8em;
 }
 
 .show-all-link {
@@ -71,4 +86,228 @@ hr.category-title {
 
 .back-links small {
   cursor: pointer;
+}
+
+/*body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
+}*/
+
+/*ul {
+  padding-left: 0;
+}*/
+
+/*li {
+  list-style-type: none;
+}*/
+
+/*.container {
+  margin: 0 auto;
+  max-width: 1070px;
+  padding: 20px;
+  min-width: 1070px;
+}*/
+
+/*.header {
+  font-size: 50px;
+  font-weight: 300;
+  margin: 10px 0;
+}*/
+
+/*.subheader {
+  font-size: 30px;
+  font-weight: 300;
+}*/
+
+/*.icon-btn {
+  background: none;
+  border: none;
+}*/
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.overlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.modal {
+  position: absolute;
+  top: 40px;
+  left: 300px;
+  right: 300px;
+  bottom: 40px;
+  border: 1px solid rgb(204, 204, 204);
+  background: rgb(255, 255, 255);
+  overflow: auto;
+  border-radius: 4px;
+  outline: none;
+  padding: 20px;
+  border-radius: 3px;
+  box-shadow: 0 3px 8px 0 rgba(0,0,0,.24), 0 3px 12px 0 rgba(0,0,0,.12);
+  min-width: 400px;
+}
+
+/*.search-container h3 {
+  text-align: center;
+}*/
+
+.post-input {
+  width: 90%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #bdbdbd;
+  outline: none;
+}
+
+.post-input-cont {
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+
+/*.search {
+  display: flex;
+}*/
+
+/*.loading {
+  align-self: center;
+  margin: 0 auto;
+}*/
+
+/*.days h3 {
+  padding: 50px 0;
+}*/
+
+/*.food-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}*/
+
+/*.food-list li {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}*/
+
+/*.food-list img {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  border-radius: 3px;
+}*/
+
+/*.ingredients-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}*/
+
+/*.ingredients-list li {
+  font-size: 24px;
+  padding: 5px;
+}*/
+
+/*.food-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}*/
+
+/*.food-item img {
+  width: 100px;
+  height: 100px;
+  border-radius: 3px;
+}*/
+
+/*.food-item button {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  font-size: 14px;
+  margin-top: 5px;
+}*/
+
+
+/* ------------------------
+   FORMS
+*/
+.item-label {
+  display: block;
+  font-family: system-ui;
+  font-size: .7em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: .5em;
+}
+
+.form-item {
+  margin-top: 1em;
+}
+
+.form-input, .form-buttons {
+  width: 50%;
+}
+
+.form-buttons {
+  text-align: right;
+}
+
+.action-icons-cont {
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 2px;
+  display: inline-block;
+  margin-left: .75em;
+  box-sizing: border-box;
+}
+
+.action-icon-cont {
+  width: 1.25em;
+  height: 1.25em;
+  text-align: center;
+  display: inline-block;
+}
+
+.action-icon-btn {
+  font-size: 1em;
+  vertical-align: -.2em;
+}
+
+.action-icon-btn-delete {
+  color: #ff0000;
+}
+
+.action-icon-btn-edit {
+  color: #0ec7ca;
+}
+
+.temp-style {
+  margin-top: 24px;
+  /* margin-left: 24px; */
+}
+
+.category-prefix {
+  font-weight: 500;
+}
+
+.sort-options {
+  font-size: .8em;
+  margin-top: 1em;
+}
+
+.method {
+  font-weight: 600;
 }

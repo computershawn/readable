@@ -11,18 +11,20 @@ import { convertDate } from '../utils/helpers'
 
 
 
-export default function Comment ({ comment, onVoteCom }) {
+export default function Comment ({ comment, onVoteCom, onDeleteCom }) {
   return (
     <div className="comment-wrapper">
       <div key={comment.id} className="comment-block">
         <h4 className="comment-author"><UserIcon className="post-icon" size={'1em'} />{comment.author}</h4>
         <p>{comment.body}</p>
-        <div className="post-icon-bar">
+        <div className="comment-icon-bar">
           <CalendarIcon className="post-icon" size={'1em'} /><span className="info-style">{convertDate(comment.timestamp)}</span>
           <StarIcon className="post-icon" size={'1em'} /><span className="vote-style">{comment.voteScore}</span>
           <UpvoteIcon className="post-icon" size={'1em'} style={{marginRight:'.3em'}} onClick={() => onVoteCom(true)} />
           <DownvoteIcon className="post-icon" size={'1em'} onClick={() => onVoteCom(false)} />
-          <DeleteIcon className="post-icon" size={'1em'} onClick={() => {console.log("about to delete this")}} />          
+          <div className="delete-icon-cont" onClick={() => onDeleteCom()}>
+            <DeleteIcon className="delete-icon-btn" />
+          </div>
         </div>
       </div>
     </div>

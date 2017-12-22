@@ -5,7 +5,7 @@ let db = {}
 const defaultData = {
   "8xf0y6ziyjabvozdd253nd": {
     id: '8xf0y6ziyjabvozdd253nd',
-    timestamp: 1467166872634,
+    timestamp: 1467097200000,
     title: 'Hey dum-dum. Udacity is the best place to learn React',
     body: 'Everyone says so after all.',
     author: 'thingtwo',
@@ -13,6 +13,28 @@ const defaultData = {
     voteScore: 6,
     deleted: false,
     commentCount: 2
+  },
+  "8xf0y6ziyjabvozdd915ta": {
+    id: '8xf0y6ziyjabvozdd915ta',
+    timestamp: 1467356400000,
+    title: 'Even Sonic the Hedgehog is going in on loot boxes',
+    body: 'Like, for real yo',
+    author: 'thingthree',
+    category: 'react',
+    voteScore: 5,
+    deleted: false,
+    commentCount: 0
+  },
+  "8xf0y6ziyjabvozdd721pl": {
+    id: '8xf0y6ziyjabvozdd721pl',
+    timestamp: 1467183600000,
+    title: 'Twitter\'s verification program was a mess from the start',
+    body: 'I live with my parents',
+    author: 'billsmith',
+    category: 'react',
+    voteScore: 8,
+    deleted: false,
+    commentCount: 0
   },
   "6ni6ok3ym7mf1p33lnez": {
     id: '6ni6ok3ym7mf1p33lnez',
