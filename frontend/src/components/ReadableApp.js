@@ -9,10 +9,11 @@ import { addPost, removePost, postsFetchData,
 import SinglePost from './SinglePost'
 import PostDetail from './PostDetail'
 import PostForm from './PostForm'
+import SingleCategory from './SingleCategory'
 import { capitalize } from '../utils/helpers'
 import AddIcon from 'react-icons/lib/md/add-circle-outline'
 import sortBy from 'sort-by'
-import { Route, BrowserRouter, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
 const uuidv4 = require('uuid/v4');
 
@@ -180,97 +181,240 @@ class ReadableApp extends Component {
     this.props.store.dispatch(adjustCommentCount({ "id" : commentData.parentID, "up" : true }))
   }
 
+  // render() {
+  //   return (
+  //     <Router>
+  //       <div>
+  //         <Route exact path="/" render = {() => {
+  //           let tempArray = ['react','redux','udacity']
+  //           return (
+  //             <div>
+  //               {
+  //                 tempArray.map((item) => <Link to={"/" + item} key={item}>{capitalize(item)} &nbsp;|&nbsp;</Link>)
+  //               }
+  //             </div>
+  //           )
+  //         }}/>
+  //         <Route exact path="/react" render = {() => (
+  //             <SingleCategory categoryName="react"></SingleCategory>
+  //           )}/>
+  //         <Route exact path="/redux" render = {() => (
+  //             <SingleCategory categoryName="redux"></SingleCategory>
+  //           )}/>
+  //         <Route exact path="/udacity" render = {() => (
+  //             <SingleCategory categoryName="udacity"></SingleCategory>
+  //           )}/>
+  //       </div>
+  //     </Router>
+  //   )
+  // }
   render() {
     let { categories, posts, comments } = this.props
     let { currentCategory, selectedPost, postModalOpen, sortMethod } = this.state
     return (
-      <BrowserRouter>
-        <div className="Readable-App" style={{paddingLeft:'24px', paddingRight:'24px'}}>
-          <h2>readable</h2>
-          <div className="temp-style">
-            <button onClick={()=>this.openPostModal(true)} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
-          </div>
-          <div className="sort-options">
-            <span>Sort By | </span>
-            <a href="/" onClick={this.sortByDate} className="method">DATE</a>&nbsp;|&nbsp;
-            <a href="/" onClick={this.sortByPop} className="method">POPULARITY</a>
-          </div>
-          <div>
-            <div className="posts-wrapper">
-              {selectedPost===null && currentCategory===null && <h3>Categories</h3>}
-              {
-                (selectedPost===null) &&
-                categories
-                  .filter(function(cat) {
-                    // If no current category selected, the filter
-                    // will allow all categories to display
-                    if(currentCategory===null) {
-                      return true
-                    }
-                    // If there is a currently selected category, the
-                    // filter will allow only that one to be displayed
-                    return (cat.name===currentCategory)
-                  })
-                  .map((cat) =>
-                    <div key={cat.name} className="cat-container">
-                      <h3 className="category-title" id={cat.name} onClick={this.selectCategoryByName}>
-                        {currentCategory!==null && <span className="category-prefix">Category | </span>}
-                        {capitalize(cat.name)}
-                      </h3>
-                      {
-                        (posts.findIndex(post => (post.category===cat.name && post.deleted===false))===-1) &&
-                        <div className="show-all-link"><small>No posts for category <strong>{cat.name}</strong></small></div>
-                      }
-                      {
-                        currentCategory!==null &&
-                        <div className="show-all-link"><small onClick={this.showAllCategories}>Show all categories</small></div>
-                      }
-                      <div>
-                        {
-                          posts
-                          .filter((post) => (post.category===cat.name && post.deleted===false))
-                          .sort(sortBy((sortMethod)))
-                          .map((post) => <SinglePost key={post.id} className="post-block" post={post}
-                            onVote={(postID, option, direction)=>this.placeVote(postID, option, direction)}
-                            onSelectPost={(event,postID)=>this.getPostComments(event,postID)}></SinglePost>)
-                        }
-                      </div>
-                    </div>
-                  )
-              }
-            </div>
-              {
-                (posts.length && selectedPost!==null) &&
+      <Router>
+        <div>
+          <Route exact path="/" render = {() => {
+            return (
+              <div>
                 <div>
-                  <PostDetail key={selectedPost} className="post-block"
-                    post={posts.find(item=>(item.id===selectedPost))}
-                    onVote={(postID, option, v)=>this.placeVote(postID, option, v)}
-                    onBackToCat={this.linkBackToCategory}
-                    onShowAllCats={this.showAllCategories}
-                    postComments={comments.filter(comment=>(comment.parentId===selectedPost&&comment.deleted===false))}
-                    handleVoteCom={(comID, option, v)=>this.placeVote(comID, option, v)}
-                    handleDeleteCom={(comID, postID)=>this.deleteCom(comID, postID)}
-                    onEditPost={this.openPostModal(false)}
-                    onDeletePost={(postCategory)=>this.handleDeletePost(selectedPost, postCategory)}
-                    onGetCommentData={this.processNewComm}></PostDetail>
+                  <div className="posts-wrapper">
+                      {categories
+                        .map((cat) =>
+                          <div key={cat.name} className="cat-container">
+                            <h3 className="category-title" id={cat.name} onClick={this.selectCategoryByName}>
+                              <Link to={"/" + cat.name} key={cat.name}>{capitalize(cat.name)}</Link>
+                            </h3>
+                            {
+                              (posts.findIndex(post => (post.category===cat.name && post.deleted===false))===-1) &&
+                              <div className="show-all-link"><small>No posts for category <strong>{cat.name}</strong></small></div>
+                            }
+                            <div>
+                              {
+                                posts
+                                .filter((post) => (post.category===cat.name && post.deleted===false))
+                                .sort(sortBy((sortMethod)))
+                                .map((post) => <SinglePost key={post.id} className="post-block" post={post}
+                                  onVote={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+                                  onSelectPost={(event,postID)=>this.getPostComments(event,postID)}></SinglePost>)
+                              }
+                            </div>
+                          </div>
+                        )
+                    }
+                  </div>
                 </div>
-              }
-          </div>
-          <Modal
-            className='modal'
-            overlayClassName='overlay'
-            isOpen={postModalOpen}
-            contentLabel='Modal'
-          >
-            {postModalOpen &&
-              <PostForm
-                // content={this.getEditStatus}
-                cats={categories}
-                onSubmitNewPost={this.processNewPost}
-                onCancelPost={this.cancelPost}></PostForm>}
-          </Modal>
+              </div>
+
+
+
+
+
+              //         <Route exact path="/" render = {() => {
+              //           let tempArray = ['react','redux','udacity']
+              //           return (
+              //             <div>
+              //               {
+              //                 tempArray.map((item) => <Link to={"/" + item} key={item}>{capitalize(item)} &nbsp;|&nbsp;</Link>)
+              //               }
+              //             </div>
+              //           )
+              //         }}/>
+
+              // <div>
+              //   <div className="posts-wrapper">
+              //     {selectedPost===null && currentCategory===null && <h3>Categories</h3>}
+              //     {
+              //       (selectedPost===null) &&
+              //       categories
+              //         .filter(function(cat) {
+              //           // If no current category selected, the filter
+              //           // will allow all categories to display
+              //           if(currentCategory===null) {
+              //             return true
+              //           }
+              //           // If there is a currently selected category, the
+              //           // filter will allow only that one to be displayed
+              //           return (cat.name===currentCategory)
+              //         })
+              //         .map((cat) =>
+              //           <div key={cat.name} className="cat-container">
+              //             <h3 className="category-title" id={cat.name} onClick={this.selectCategoryByName}>
+              //               {
+              //                 //{currentCategory!==null && <span className="category-prefix">Category | </span>}
+              //                 //{capitalize(cat.name)}
+              //               }
+              //               <Link to={"/" + cat.name} key={cat.name}>{capitalize(cat.name)}</Link>
+              //             </h3>
+              //             {
+              //               (posts.findIndex(post => (post.category===cat.name && post.deleted===false))===-1) &&
+              //               <div className="show-all-link"><small>No posts for category <strong>{cat.name}</strong></small></div>
+              //             }
+              //             {
+              //               currentCategory!==null &&
+              //               <div className="show-all-link"><small onClick={this.showAllCategories}>Show all categories</small></div>
+              //             }
+              //             <div>
+              //               {
+              //                 posts
+              //                 .filter((post) => (post.category===cat.name && post.deleted===false))
+              //                 .sort(sortBy((sortMethod)))
+              //                 .map((post) => <SinglePost key={post.id} className="post-block" post={post}
+              //                   onVote={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+              //                   onSelectPost={(event,postID)=>this.getPostComments(event,postID)}></SinglePost>)
+              //               }
+              //             </div>
+              //           </div>
+              //         )
+              //     }
+              //   </div>
+              // </div>
+            )
+          }}/>
+          {
+            categories.map(cat=>(
+              <Route key={cat.name} path={"/"+cat.name} render = {() => (
+                <SingleCategory
+                  categoryName={cat.name}
+                  categoryPosts={posts.filter((post) => (post.category===cat.name && post.deleted===false))}>
+                </SingleCategory>
+              )}/>
+            ))
+          }
         </div>
-      </BrowserRouter>
+      </Router>
+    )
+  }
+
+  render2() {
+    let { categories, posts, comments } = this.props
+    let { currentCategory, selectedPost, postModalOpen, sortMethod } = this.state
+    return (
+      <div className="Readable-App" style={{paddingLeft:'24px', paddingRight:'24px'}}>
+        <h2>readable</h2>
+        <div className="temp-style">
+          <button onClick={()=>this.openPostModal(true)} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
+        </div>
+        <div className="sort-options">
+          <span>Sort By | </span>
+          <a href="/" onClick={this.sortByDate} className="method">DATE</a>&nbsp;|&nbsp;
+          <a href="/" onClick={this.sortByPop} className="method">POPULARITY</a>
+        </div>
+        <div>
+          <div className="posts-wrapper">
+            {selectedPost===null && currentCategory===null && <h3>Categories</h3>}
+            {
+              (selectedPost===null) &&
+              categories
+                .filter(function(cat) {
+                  // If no current category selected, the filter
+                  // will allow all categories to display
+                  if(currentCategory===null) {
+                    return true
+                  }
+                  // If there is a currently selected category, the
+                  // filter will allow only that one to be displayed
+                  return (cat.name===currentCategory)
+                })
+                .map((cat) =>
+                  <div key={cat.name} className="cat-container">
+                    <h3 className="category-title" id={cat.name} onClick={this.selectCategoryByName}>
+                      {currentCategory!==null && <span className="category-prefix">Category | </span>}
+                      {capitalize(cat.name)}
+                    </h3>
+                    {
+                      (posts.findIndex(post => (post.category===cat.name && post.deleted===false))===-1) &&
+                      <div className="show-all-link"><small>No posts for category <strong>{cat.name}</strong></small></div>
+                    }
+                    {
+                      currentCategory!==null &&
+                      <div className="show-all-link"><small onClick={this.showAllCategories}>Show all categories</small></div>
+                    }
+                    <div>
+                      {
+                        posts
+                        .filter((post) => (post.category===cat.name && post.deleted===false))
+                        .sort(sortBy((sortMethod)))
+                        .map((post) => <SinglePost key={post.id} className="post-block" post={post}
+                          onVote={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+                          onSelectPost={(event,postID)=>this.getPostComments(event,postID)}></SinglePost>)
+                      }
+                    </div>
+                  </div>
+                )
+            }
+          </div>
+            {
+              (posts.length && selectedPost!==null) &&
+              <div>
+                <PostDetail key={selectedPost} className="post-block"
+                  post={posts.find(item=>(item.id===selectedPost))}
+                  onVote={(postID, option, v)=>this.placeVote(postID, option, v)}
+                  onBackToCat={this.linkBackToCategory}
+                  onShowAllCats={this.showAllCategories}
+                  postComments={comments.filter(comment=>(comment.parentId===selectedPost&&comment.deleted===false))}
+                  handleVoteCom={(comID, option, v)=>this.placeVote(comID, option, v)}
+                  handleDeleteCom={(comID, postID)=>this.deleteCom(comID, postID)}
+                  onEditPost={this.openPostModal(false)}
+                  onDeletePost={(postCategory)=>this.handleDeletePost(selectedPost, postCategory)}
+                  onGetCommentData={this.processNewComm}></PostDetail>
+              </div>
+            }
+        </div>
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={postModalOpen}
+          contentLabel='Modal'
+        >
+          {postModalOpen &&
+            <PostForm
+              // content={this.getEditStatus}
+              cats={categories}
+              onSubmitNewPost={this.processNewPost}
+              onCancelPost={this.cancelPost}></PostForm>}
+        </Modal>
+      </div>
     );
   }
 }

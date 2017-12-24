@@ -6,6 +6,7 @@ import CommentIcon from 'react-icons/lib/md/comment'
 import UpvoteIcon from 'react-icons/lib/md/thumb-up'
 import DownvoteIcon from 'react-icons/lib/md/thumb-down'
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom'
 import { convertDate } from '../utils/helpers'
 
 
@@ -25,7 +26,7 @@ class SinglePost extends Component {
     let { post, onVote, onSelectPost } = this.props
     return (
       <div key={post.id} className="post-block">
-        <h4 className="post-title"><a href="/" onClick={(event)=>onSelectPost(event,post.id)}>{post.title}</a></h4>
+        <h4 className="post-title"><Link to={"/"+post.id}>{post.title}</Link></h4>
         <div className="post-icon-bar">
           <UserIcon className="post-icon" size={'1em'} /><span className="info-style">{post.author}</span>
           <CalendarIcon className="post-icon" size={'1em'} /><span className="info-style">{convertDate(post.timestamp)}</span>
