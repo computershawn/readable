@@ -23,7 +23,6 @@ body {
 .post-title {
   margin-top: .5em;
   margin-bottom: .5em;
-  cursor: pointer;
 }
 
 .cat-container {
@@ -53,8 +52,8 @@ hr.category-title {
 }
 
 .category-title {
-  cursor: pointer;
   margin-left: 8px;
+  font-weight: 500;
 }
 
 .post-icon-bar {
@@ -78,7 +77,6 @@ hr.category-title {
 
 .show-all-link {
   margin-bottom: 1em;
-  cursor: pointer;
 }
 
 .back-links {
@@ -86,7 +84,6 @@ hr.category-title {
 }
 
 .back-links small {
-  cursor: pointer;
 }
 
 /*body {
@@ -282,6 +279,15 @@ hr.category-title {
   display: inline-block;
 }
 
+.delete-icon-cont {
+  display: inline-block;
+}
+
+.delete-icon-btn {
+  margin-left: .2em;
+  vertical-align: -.1em;
+}
+
 .action-icon-btn {
   font-size: 1em;
   vertical-align: -.2em;
@@ -300,17 +306,30 @@ hr.category-title {
   /* margin-left: 24px; */
 }
 
-.category-prefix {
+/* .category-nav {
   font-weight: 500;
-}
+} */
 
 .nav-options {
   font-size: .8em;
   margin-top: 1em;
-  padding-left: 12px;
+  margin-bottom: 1em;
+  padding-left: 8px;
   display: inline-block;
 }
 
-/* .method {
-  font-weight: 600;
-} */
+.app-title {
+  font-weight: 300;
+}
+
+.cat-not-current {
+  opacity: .64;
+}
+
+.cat-current {
+  opacity: 1;
+}
+
+.post-deleted {
+  padding-left: 8px;
+}

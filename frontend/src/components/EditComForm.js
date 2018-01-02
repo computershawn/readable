@@ -4,11 +4,10 @@ import PropTypes from 'prop-types';
 
 
 
-class CommentForm extends React.Component {
+class EditComForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      commAuthor: null,
       commText: null,
     };
 
@@ -17,7 +16,8 @@ class CommentForm extends React.Component {
 
   static propTypes = {
     onSubmitComment: PropTypes.func.isRequired,
-    onCancelComment: PropTypes.func.isRequired
+    onCancelComment: PropTypes.func.isRequired,
+    defaultText: PropTypes.string
   }
 
   handleInputChange(event) {
@@ -32,24 +32,16 @@ class CommentForm extends React.Component {
 
   render() {
     let { onSubmitComment, onCancelComment } = this.props
-    let { commAuthor, commText } = this.state
+    let { commText } = this.state
     return (
       <div>
-        <h4>New Comment</h4>
-        <form onSubmit={(e)=>{e.preventDefault(); return onSubmitComment(commAuthor, commText)}}>
-          {/* Enter Name */}
-          <div className="form-item">
-            <label>
-              <span className="item-label">Username</span>
-              <input className="form-input" name="commAuthor" placeholder="Your username" type="text" onChange={this.handleInputChange} required />
-            </label>
-          </div>
-
+        <h4>Edit Comment</h4>
+        <form onSubmit={(e)=>{e.preventDefault(); return onSubmitComment(commText)}}>
           {/* Enter Text */}
           <div className="form-item">
             <label>
               <span className="item-label">Text</span>
-              <textarea className="form-input" name="commText" placeholder="Text of your comment" onChange={this.handleInputChange} required />
+              <textarea className="form-input" name="commText" defaultValue={this.props.defaultText} onChange={this.handleInputChange} required />
             </label>
           </div>
 
@@ -68,4 +60,4 @@ class CommentForm extends React.Component {
 
 
 
-export default CommentForm
+export default EditComForm

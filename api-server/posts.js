@@ -56,7 +56,7 @@ const defaultData = {
     category: 'udacity',
     voteScore: 100,
     deleted: false,
-    commentCount: 0,
+    commentCount: 1,
     comments: null,
   },
   "9ki6ok3ym7mf1p33lnez": {

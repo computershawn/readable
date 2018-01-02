@@ -1,32 +1,27 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import Modal from 'react-modal'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import './App.css';
-import { addPost, removePost, postsFetchData,
-  commentsFetchData, votePost, voteComment,
-  addComment, removeComment, adjustCommentCount} from '../actions'
-import SinglePost from './SinglePost'
+import './App.css'
+import { addPost, editPost, removePost, postsFetchData,
+  votePost, voteComment, addComment, editComment,
+  removeComment, adjustCommentCount} from '../actions'
 import PostDetail from './PostDetail'
 import PostForm from './PostForm'
+import EditPostForm from './EditPostForm'
 import SingleCategory from './SingleCategory'
-import { capitalize } from '../utils/helpers'
 import AddIcon from 'react-icons/lib/md/add-circle-outline'
-import sortBy from 'sort-by'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require('uuid/v4')
 
 
 
 
 class ReadableApp extends Component {
   state = {
-    currentCategory: null,
-    selectedPost: null,
     postModalOpen: false,
-    sortMethod: '-timestamp',
-    postIsNew: false
+    editModalOpen: false,
   }
 
   static propTypes = {
@@ -37,48 +32,14 @@ class ReadableApp extends Component {
   }
 
   componentDidMount() {
-    // Begin process of getting application data from the API
-    this.props.fetchData();
+    // Getting application data from the API
+    this.props.fetchData()
   }
 
-  getPostComments = (event, postID) => {
-    event.preventDefault()
-    let index = this.props.comments.findIndex(item=>(item.parentId===postID))
-    if(index === -1)
-      this.props.fetchComments(postID)
-    // this.setState({
-    //   selectedPost: postID
-    // })
-    debugger;
-  }
-
-  handleDeletePost = (postID, category) => {
-    // First, delete that post
+  // Delete the post
+  handleDeletePost = (postID) => {
     this.props.store.dispatch(removePost({ "id" : postID }))
-    // Then go back to the category view
-    this.setState({
-      currentCategory: category,
-      selectedPost: null
-    })
   }
-
-  // handleEditPost = (postID) => {
-  //   //console.log("Editing post " + postID)
-  //   //let p = this.props.posts.find((post) => (post.id===postID))
-  //   //console.log(p.body)
-  //
-  // }
-
-  // getEditStatus = () => {
-  //   if(this.state.postIsNew) {
-  //     console.log("pressed new post button")
-  //     return null
-  //   } else {
-  //     console.log("pressed edit post button")
-  //     let existingPost = this.props.posts.find((post) => (post.id===this.state.selectedPost))
-  //     return existingPost
-  //   }
-  // }
 
   placeVote = (itemID, option, updown) => {
     switch (option) {
@@ -98,53 +59,11 @@ class ReadableApp extends Component {
     this.props.store.dispatch(adjustCommentCount({ "id" : postID, "up" : false }))
   }
 
-  selectCategoryByName = (e) => {
-    this.setState({
-      currentCategory: e.target.id
-    })
-  }
-
-  linkBackToCategory = (category) => {
-    this.setState({
-      currentCategory: category,
-      selectedPost: null
-    })
-  }
-
-  showAllCategories = (e) => {
-    this.setState({
-      currentCategory: null,
-      selectedPost: null
-    })
-  }
-
-  sortByDate = (event) => {
-    event.preventDefault()
-    this.setState({
-      sortMethod: "-timestamp"
-    })
-  }
-
-  sortByPop = (event) => {
-    event.preventDefault()
-    this.setState({
-      sortMethod: "-voteScore"
-    })
-  }
-
-  // openPostModal = (isPostNew) => this.setState(() => ({
-  //   postModalOpen: true,
-  //   postIsNew: isPostNew
-  // }))
-  // openPostModal = (isPostNew) => {
-  //   this.setState({
-  //     postModalOpen: true,
-  //     postIsNew: isPostNew
-  //   })
-  // }
+  // Control the New Post modal
   openPostModal = () => this.setState(() => ({ postModalOpen: true }))
   closePostModal = () => this.setState(() => ({ postModalOpen: false }))
   processNewPost = (evt, postCategory, postAuthor, postTitle, postText) => {
+    evt.preventDefault()
     let newPostID = uuidv4();  // Generate a UUID
     this.props.store.dispatch(addPost({
       "id" : newPostID,
@@ -155,7 +74,6 @@ class ReadableApp extends Component {
       "body" : postText
       })
     )
-    evt.preventDefault()
     this.closePostModal()
   }
   cancelPost = (evt) => {
@@ -163,259 +81,141 @@ class ReadableApp extends Component {
     evt.preventDefault()
   }
 
-
-  processNewComm = (commentData) => {
-    console.log('creating new comment:\n' +
-      'parent: ' + commentData.parentID +
-      '\nauthor: ' + commentData.author +
-      '\ntext: ' + commentData.content)
-
-    this.props.store.dispatch(addComment({
-      "id" : uuidv4(),
-      "parentId" : commentData.parentID,
-      "timestamp" : Date.now(),
-      "body" : commentData.content,
-      "author" : commentData.author
+  // Control the Edit Post modal
+  openEditModal = () => this.setState(() => ({ editModalOpen: true }))
+  closeEditModal = () => this.setState(() => ({ editModalOpen: false }))
+  processEditPost = (evt, postID, body) => {
+    evt.preventDefault()
+    this.props.store.dispatch(editPost({
+      "id" : postID,
+      "body" : body
       })
     )
-    this.props.store.dispatch(adjustCommentCount({ "id" : commentData.parentID, "up" : true }))
+    this.closeEditModal()
+  }
+  cancelEdit = (evt) => {
+    evt.preventDefault()
+    this.closeEditModal()
   }
 
-  // render() {
-  //   return (
-  //     <Router>
-  //       <div>
-  //         <Route exact path="/" render = {() => {
-  //           let tempArray = ['react','redux','udacity']
-  //           return (
-  //             <div>
-  //               {
-  //                 tempArray.map((item) => <Link to={"/" + item} key={item}>{capitalize(item)} &nbsp;|&nbsp;</Link>)
-  //               }
-  //             </div>
-  //           )
-  //         }}/>
-  //         <Route exact path="/react" render = {() => (
-  //             <SingleCategory categoryName="react"></SingleCategory>
-  //           )}/>
-  //         <Route exact path="/redux" render = {() => (
-  //             <SingleCategory categoryName="redux"></SingleCategory>
-  //           )}/>
-  //         <Route exact path="/udacity" render = {() => (
-  //             <SingleCategory categoryName="udacity"></SingleCategory>
-  //           )}/>
-  //       </div>
-  //     </Router>
-  //   )
-  // }
+  // Submit the New Comment
+  processNewComment = (author, text, parentID) => {
+    this.props.store.dispatch(addComment({
+      "id" : uuidv4(),
+      "parentId" : parentID,
+      "timestamp" : Date.now(),
+      "body" : text,
+      "author" : author
+    })
+  )
+  this.props.store.dispatch(adjustCommentCount({ "id" : parentID, "up" : true }))
+  }
+
+  // Submit the Edited Comment
+  processEditedComment = (commentID, text) => {
+    this.props.store.dispatch(editComment({
+        "id" : commentID,
+        "body" : text
+      })
+    )
+  }
+
+
   render() {
     let { categories, posts, comments } = this.props
-    let { currentCategory, selectedPost, postModalOpen, sortMethod } = this.state
+    let { postModalOpen, editModalOpen } = this.state
     return (
       <Router>
         <div>
-          <Route exact path="/" render = {() => {
-            return (
-              <div>
-                <div>
-                  <div className="posts-wrapper">
-                      {categories
-                        .map((cat) =>
-                          <div key={cat.name} className="cat-container">
-                            <h3 className="category-title" id={cat.name} onClick={this.selectCategoryByName}>
-                              <Link to={"/" + cat.name} key={cat.name}>{capitalize(cat.name)}</Link>
-                            </h3>
-                            {
-                              (posts.findIndex(post => (post.category===cat.name && post.deleted===false))===-1) &&
-                              <div className="show-all-link"><small>No posts for category <strong>{cat.name}</strong></small></div>
-                            }
-                            <div>
-                              {
-                                posts
-                                .filter((post) => (post.category===cat.name && post.deleted===false))
-                                .sort(sortBy((sortMethod)))
-                                .map((post) => <SinglePost key={post.id} className="post-block" post={post}
-                                  onVote={(postID, option, direction)=>this.placeVote(postID, option, direction)}
-                                  onSelectPost={(event,postID)=>this.getPostComments(event,postID)}></SinglePost>)
-                              }
-                            </div>
-                          </div>
-                        )
-                    }
-                  </div>
-                </div>
-              </div>
+          <div style={{marginLeft:24+'px'}}>
+            <h1 className="app-title">Readable</h1>
+            <div className="temp-style">
+              <button onClick={()=>this.openPostModal()} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
+            </div>
+          </div>
 
+          {/* -------- App Home Screen -------- */}
+          <Route exact path="/" render = {() => (
+            categories.map(cat=>(
+              <SingleCategory
+                key={cat.name}
+                cats={categories}
+                categoryName={cat.name}
+                categoryPosts={posts.filter((post) => (post.category===cat.name && post.deleted===false))}
+                viewingAll={true}
+                sendVoteUpstream={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+                >
+              </SingleCategory>
+            ))
+          )}/>
 
-
-
-
-              //         <Route exact path="/" render = {() => {
-              //           let tempArray = ['react','redux','udacity']
-              //           return (
-              //             <div>
-              //               {
-              //                 tempArray.map((item) => <Link to={"/" + item} key={item}>{capitalize(item)} &nbsp;|&nbsp;</Link>)
-              //               }
-              //             </div>
-              //           )
-              //         }}/>
-
-              // <div>
-              //   <div className="posts-wrapper">
-              //     {selectedPost===null && currentCategory===null && <h3>Categories</h3>}
-              //     {
-              //       (selectedPost===null) &&
-              //       categories
-              //         .filter(function(cat) {
-              //           // If no current category selected, the filter
-              //           // will allow all categories to display
-              //           if(currentCategory===null) {
-              //             return true
-              //           }
-              //           // If there is a currently selected category, the
-              //           // filter will allow only that one to be displayed
-              //           return (cat.name===currentCategory)
-              //         })
-              //         .map((cat) =>
-              //           <div key={cat.name} className="cat-container">
-              //             <h3 className="category-title" id={cat.name} onClick={this.selectCategoryByName}>
-              //               {
-              //                 //{currentCategory!==null && <span className="category-prefix">Category | </span>}
-              //                 //{capitalize(cat.name)}
-              //               }
-              //               <Link to={"/" + cat.name} key={cat.name}>{capitalize(cat.name)}</Link>
-              //             </h3>
-              //             {
-              //               (posts.findIndex(post => (post.category===cat.name && post.deleted===false))===-1) &&
-              //               <div className="show-all-link"><small>No posts for category <strong>{cat.name}</strong></small></div>
-              //             }
-              //             {
-              //               currentCategory!==null &&
-              //               <div className="show-all-link"><small onClick={this.showAllCategories}>Show all categories</small></div>
-              //             }
-              //             <div>
-              //               {
-              //                 posts
-              //                 .filter((post) => (post.category===cat.name && post.deleted===false))
-              //                 .sort(sortBy((sortMethod)))
-              //                 .map((post) => <SinglePost key={post.id} className="post-block" post={post}
-              //                   onVote={(postID, option, direction)=>this.placeVote(postID, option, direction)}
-              //                   onSelectPost={(event,postID)=>this.getPostComments(event,postID)}></SinglePost>)
-              //               }
-              //             </div>
-              //           </div>
-              //         )
-              //     }
-              //   </div>
-              // </div>
-            )
-          }}/>
+          {/* -------- Viewing a Single Category -------- */}
           {
             categories.map(cat=>(
-              <Route key={cat.name} path={"/"+cat.name} render = {() => (
+              <Route exact key={cat.name} path={"/"+cat.name} render = {() => (
                 <SingleCategory
+                  cats={categories}
                   categoryName={cat.name}
-                  categoryPosts={posts.filter((post) => (post.category===cat.name && post.deleted===false))}>
+                  categoryPosts={posts.filter((post) => (post.category===cat.name && post.deleted===false))}
+                  viewingAll={false}
+                  sendVoteUpstream={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+                  >
                 </SingleCategory>
               )}/>
             ))
           }
+
+          {/* -------- Post Detail Screen -------- */}
+          {
+            posts.map(post=>(
+              <Route exact key={post.id} path={"/"+post.category+"/"+post.id} render = {() => (
+                <PostDetail key={post.id} className="post-block"
+                  cats={categories}
+                  post={post}
+                  onVote={(option, v)=>this.placeVote(post.id, option, v)}
+                  postComments={comments.filter(comment=>(comment.parentId===post.id&&comment.deleted===false))}
+                  handleVoteCom={(comID, option, v)=>this.placeVote(comID, option, v)}
+                  onDeletePost={()=>this.handleDeletePost(post.id)}
+                  handleDeleteCom={(comID, postID)=>this.deleteCom(comID, postID)}
+                  onEditPost={()=>this.openEditModal()}
+                  handleNewCom={this.processNewComment}
+                  handleEditCom={this.processEditedComment}
+                  >
+                </PostDetail>
+              )}/>
+            ))
+          }
+
+          {/* -------- New Post Modal -------- */}
+              <Modal
+                className='modal'
+                overlayClassName='overlay'
+                isOpen={postModalOpen}
+                contentLabel='Modal'>
+                {postModalOpen &&
+                  <PostForm
+                    cats={categories}
+                    onSubmitPost={this.processNewPost}
+                    onCancelPost={this.cancelPost}>
+                  </PostForm>}
+              </Modal>
+
+          {/* -------- Edit Post Modal -------- */}
+              <Modal
+                className='modal'
+                overlayClassName='overlay'
+                isOpen={editModalOpen}
+                contentLabel='Modal'>
+                {editModalOpen &&
+                  <EditPostForm
+                    onSubmitEdit={this.processEditPost}
+                    onCancelEdit={this.cancelEdit}
+                    posts={posts}>
+                  </EditPostForm>}
+              </Modal>
         </div>
       </Router>
     )
-  }
-
-  render2() {
-    let { categories, posts, comments } = this.props
-    let { currentCategory, selectedPost, postModalOpen, sortMethod } = this.state
-    return (
-      <div className="Readable-App" style={{paddingLeft:'24px', paddingRight:'24px'}}>
-        <h2>readable</h2>
-        <div className="temp-style">
-          <button onClick={()=>this.openPostModal(true)} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
-        </div>
-        <div className="sort-options">
-          <span>Sort By | </span>
-          <a href="/" onClick={this.sortByDate} className="method">DATE</a>&nbsp;|&nbsp;
-          <a href="/" onClick={this.sortByPop} className="method">POPULARITY</a>
-        </div>
-        <div>
-          <div className="posts-wrapper">
-            {selectedPost===null && currentCategory===null && <h3>Categories</h3>}
-            {
-              (selectedPost===null) &&
-              categories
-                .filter(function(cat) {
-                  // If no current category selected, the filter
-                  // will allow all categories to display
-                  if(currentCategory===null) {
-                    return true
-                  }
-                  // If there is a currently selected category, the
-                  // filter will allow only that one to be displayed
-                  return (cat.name===currentCategory)
-                })
-                .map((cat) =>
-                  <div key={cat.name} className="cat-container">
-                    <h3 className="category-title" id={cat.name} onClick={this.selectCategoryByName}>
-                      {currentCategory!==null && <span className="category-prefix">Category | </span>}
-                      {capitalize(cat.name)}
-                    </h3>
-                    {
-                      (posts.findIndex(post => (post.category===cat.name && post.deleted===false))===-1) &&
-                      <div className="show-all-link"><small>No posts for category <strong>{cat.name}</strong></small></div>
-                    }
-                    {
-                      currentCategory!==null &&
-                      <div className="show-all-link"><small onClick={this.showAllCategories}>Show all categories</small></div>
-                    }
-                    <div>
-                      {
-                        posts
-                        .filter((post) => (post.category===cat.name && post.deleted===false))
-                        .sort(sortBy((sortMethod)))
-                        .map((post) => <SinglePost key={post.id} className="post-block" post={post}
-                          onVote={(postID, option, direction)=>this.placeVote(postID, option, direction)}
-                          onSelectPost={(event,postID)=>this.getPostComments(event,postID)}></SinglePost>)
-                      }
-                    </div>
-                  </div>
-                )
-            }
-          </div>
-            {
-              (posts.length && selectedPost!==null) &&
-              <div>
-                <PostDetail key={selectedPost} className="post-block"
-                  post={posts.find(item=>(item.id===selectedPost))}
-                  onVote={(postID, option, v)=>this.placeVote(postID, option, v)}
-                  onBackToCat={this.linkBackToCategory}
-                  onShowAllCats={this.showAllCategories}
-                  postComments={comments.filter(comment=>(comment.parentId===selectedPost&&comment.deleted===false))}
-                  handleVoteCom={(comID, option, v)=>this.placeVote(comID, option, v)}
-                  handleDeleteCom={(comID, postID)=>this.deleteCom(comID, postID)}
-                  onEditPost={this.openPostModal(false)}
-                  onDeletePost={(postCategory)=>this.handleDeletePost(selectedPost, postCategory)}
-                  onGetCommentData={this.processNewComm}></PostDetail>
-              </div>
-            }
-        </div>
-        <Modal
-          className='modal'
-          overlayClassName='overlay'
-          isOpen={postModalOpen}
-          contentLabel='Modal'
-        >
-          {postModalOpen &&
-            <PostForm
-              // content={this.getEditStatus}
-              cats={categories}
-              onSubmitNewPost={this.processNewPost}
-              onCancelPost={this.cancelPost}></PostForm>}
-        </Modal>
-      </div>
-    );
   }
 }
 
@@ -430,7 +230,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         fetchData: () => dispatch(postsFetchData()),
-        fetchComments: (postID) => dispatch(commentsFetchData(postID))
     };
 };
 

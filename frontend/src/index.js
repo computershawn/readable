@@ -18,11 +18,7 @@ const store = configureStore({
 
 ReactDOM.render(
   <Provider store={store}>
-    {/* <Router> */}
-      <ReadableApp />
-      {/* Originally <ReadableApp store={store} /> but might not need to
-      include store in this component, it's included in Provider */}
-    {/* </Router> */}
+    <ReadableApp store={store} />
   </Provider>,
   document.getElementById('root')
 )

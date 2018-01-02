@@ -3,6 +3,7 @@ import { combineReducers } from 'redux'
  import {
    POSTS_FETCH_DATA_SUCCESS,
    ADD_POST,
+   EDIT_POST,
    REMOVE_POST,
    VOTE_POST,
    ADJUST_COUNT,
@@ -10,6 +11,7 @@ import { combineReducers } from 'redux'
    COMMENTS_FETCH_DATA_SUCCESS,
    ADD_COMMENT,
    REMOVE_COMMENT,
+   EDIT_COMMENT,
    VOTE_COMMENT
  } from '../actions'
 
@@ -26,6 +28,12 @@ function posts (state = [], action) {
 
     case ADD_POST :
       return [...state, { id,timestamp,title,body,author,category,voteScore,deleted,commentCount }]
+
+    case EDIT_POST :
+      index = state.findIndex((item)=>(item.id===id))
+      tempCopy = state.slice()
+      tempCopy[index]["body"] = body
+      return tempCopy
 
     case REMOVE_POST :
       index = state.findIndex((item)=>(item.id===id))
@@ -87,6 +95,12 @@ function comments (state = [], action) {
       index = state.findIndex(item=>(item.id===id))
       tempCopy = state.slice()
       tempCopy[index]["deleted"] = true
+      return tempCopy
+
+    case EDIT_COMMENT :
+      index = state.findIndex((item)=>(item.id===id))
+      tempCopy = state.slice()
+      tempCopy[index]["body"] = body
       return tempCopy
 
     case VOTE_COMMENT :
