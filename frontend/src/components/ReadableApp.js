@@ -1,24 +1,27 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react'
+import Modal from 'react-modal'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import './App.css';
-import { addPost, removePost, postsFetchData,
-  commentsFetchData, votePost, voteComment} from '../actions'
-// import { addPost, removePost, postsFetchData,
-//   commentsFetchData, voteItem,
-//   upVoteComment, downVoteComment } from '../actions'
-import SinglePost from './SinglePost'
+import './App.css'
+import { addPost, editPost, removePost, postsFetchData,
+  votePost, voteComment, addComment, editComment,
+  removeComment, adjustCommentCount} from '../actions'
 import PostDetail from './PostDetail'
+import PostForm from './PostForm'
+import EditPostForm from './EditPostForm'
+import SingleCategory from './SingleCategory'
+import AddIcon from 'react-icons/lib/md/add-circle-outline'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require('uuid/v4')
 
 
 
 
 class ReadableApp extends Component {
   state = {
-    currentCategory: null,
-    selectedPost: null
+    postModalOpen: false,
+    editModalOpen: false,
   }
 
   static propTypes = {
@@ -29,92 +32,16 @@ class ReadableApp extends Component {
   }
 
   componentDidMount() {
-    // Begin process of getting application data from the API
-    this.props.fetchData();
+    // Getting application data from the API
+    this.props.fetchData()
   }
 
-  setPostViewMode = (postID) => {
-    // this.setState({
-    //   selectedPost: postID
-    // })
+  // Delete the post
+  handleDeletePost = (postID) => {
+    this.props.store.dispatch(removePost({ "id" : postID }))
   }
 
-  getPostComments = (postID) => {
-    let index = this.props.comments.findIndex(item=>(item.parentId===postID))
-    if(index === -1)
-      this.props.fetchComments(postID)
-    this.setState({
-      selectedPost: postID
-    })
-  }
-
-  makeNewPost = () => {
-    // Random assortment of post headlines, for funzies
-    let headlines = [
-      "Star Wars Battlefront 2 heroes come at a substantial cost",
-      "The Ninja Turtles are coming to Injustice 2",
-      "Early Black Friday deals at Best Buy, Xbox One X bundles and more gaming deals",
-      "PUBG dev’s next game is an over-the-top steampunk MMO",
-      "Splatoon 2’s next Splatfest pits sci-fi against fantasy",
-      "Even Sonic the Hedgehog is going in on loot boxes",
-      "Destiny 2 update to deliver 4K, HDR on Xbox One X and PS4 Pro",
-      "Wolfenstein 2’s DLC offers a welcome break from B.J. Blazkowicz",
-      "The Anti-Defamation League hosted its first game jam",
-      "Pokémon Ultra Sun and Ultra Moon somehow make Mimikyu even weirder",
-      "New trailers: The Crown, Coco, The Post, Netflix’s Dark, and more",
-      "Amazon Echo Plus review: smart home 101",
-      "Disney’s streaming service has won, and it hasn’t even launched yet",
-      "Mindhunter is Netflix’s most binge-worthy show yet",
-      "How Snipperclips went from indie game to Nintendo Switch launch title",
-      "It’s time to stop trusting Google search already",
-      "Twitter's verification program was a mess from the start",
-      "The Verge Holiday Gift Guide 2017",
-      "UPS is hoping to convert most of its New York City fleet from diesel to electric",
-      "Wikipedia warns that SESTA will strip away protections vital to its existence"
-    ]
-    let newPostID = uuidv4();  // Generate a UUID
-    this.props.store.dispatch(addPost({
-      "id" : newPostID,
-      "timestamp" : Date.now(),
-      "title" : headlines[Math.floor(Math.random()*headlines.length)],
-      "body" : "This is the body of the post",
-      "author" : "Todd Nobdy",
-      "category" : this.props.categories[Math.floor(Math.random()*this.props.categories.length)].name
-      })
-    )
-  }
-
-  removeThisPost = (e) => {
-    console.log('About to remove this post: ', e.target.id);
-    e.preventDefault()
-    this.props.store.dispatch(removePost({
-      "id" : e.target.id,
-      })
-    )
-  }
-
-  // placeVote = (itemID, option, vote) => {
-  //   switch (option) {
-  //     case 0 :
-  //       if(vote) {
-  //         this.props.store.dispatch(upVoteItem({ "id" : itemID }))
-  //       } else {
-  //         this.props.store.dispatch(downVoteItem({ "id" : itemID }))
-  //       }
-  //       break;
-  //     case 1 :
-  //       if(vote) {
-  //         this.props.store.dispatch(upVoteComment({ "id" : itemID }))
-  //       } else {
-  //         this.props.store.dispatch(downVoteComment({ "id" : itemID }))
-  //       }
-  //       break;
-  //     default:
-  //       console.log("no vote")
-  //   }
-  // }
-
-  placeVote2 = (itemID, option, updown) => {
+  placeVote = (itemID, option, updown) => {
     switch (option) {
       case 0 :
         this.props.store.dispatch(votePost({ "id" : itemID, "up" : updown }))
@@ -127,98 +54,168 @@ class ReadableApp extends Component {
     }
   }
 
-  selectCategoryByName = (e) => {
-    this.setState({
-      currentCategory: e.target.id
-    })
+  deleteCom = (comID, postID) => {
+    this.props.store.dispatch(removeComment({ "id" : comID }))
+    this.props.store.dispatch(adjustCommentCount({ "id" : postID, "up" : false }))
   }
 
-  linkBackToCategory = (category) => {
-    this.setState({
-      currentCategory: category,
-      selectedPost: null
-    })
+  // Control the New Post modal
+  openPostModal = () => this.setState(() => ({ postModalOpen: true }))
+  closePostModal = () => this.setState(() => ({ postModalOpen: false }))
+  processNewPost = (evt, postCategory, postAuthor, postTitle, postText) => {
+    evt.preventDefault()
+    let newPostID = uuidv4();  // Generate a UUID
+    this.props.store.dispatch(addPost({
+      "id" : newPostID,
+      "timestamp" : Date.now(),
+      "category" : postCategory,
+      "author" : postAuthor,
+      "title" : postTitle,
+      "body" : postText
+      })
+    )
+    this.closePostModal()
+  }
+  cancelPost = (evt) => {
+    this.closePostModal()
+    evt.preventDefault()
   }
 
-  showAllCategories = (e) => {
-    this.setState({
-      currentCategory: null,
-      selectedPost: null
-    })
+  // Control the Edit Post modal
+  openEditModal = () => this.setState(() => ({ editModalOpen: true }))
+  closeEditModal = () => this.setState(() => ({ editModalOpen: false }))
+  processEditPost = (evt, postID, body) => {
+    evt.preventDefault()
+    this.props.store.dispatch(editPost({
+      "id" : postID,
+      "body" : body
+      })
+    )
+    this.closeEditModal()
   }
+  cancelEdit = (evt) => {
+    evt.preventDefault()
+    this.closeEditModal()
+  }
+
+  // Submit the New Comment
+  processNewComment = (author, text, parentID) => {
+    this.props.store.dispatch(addComment({
+      "id" : uuidv4(),
+      "parentId" : parentID,
+      "timestamp" : Date.now(),
+      "body" : text,
+      "author" : author
+    })
+  )
+  this.props.store.dispatch(adjustCommentCount({ "id" : parentID, "up" : true }))
+  }
+
+  // Submit the Edited Comment
+  processEditedComment = (commentID, text) => {
+    this.props.store.dispatch(editComment({
+        "id" : commentID,
+        "body" : text
+      })
+    )
+  }
+
 
   render() {
-    // Janky ass temporary styles -->
-    let tempStyle={
-      marginTop:'24px',
-      marginLeft:'24px'
-    }
-    // <-- End temporary styles
-
     let { categories, posts, comments } = this.props
-    let { currentCategory, selectedPost } = this.state
+    let { postModalOpen, editModalOpen } = this.state
     return (
-      <div className="Readable-App">
-        <h2 style={{marginLeft:'24px'}}>readable</h2>
-        <div style={tempStyle}>
-          <button onClick={this.makeNewPost} style={{marginRight:'2em'}}>Make New Post</button>
-          <input
-            type='text'
-            placeholder='Post ID'
-            ref={(input) => this.input = input}
-          />
-          <button onClick={this.removeThisPost}>Remove Post</button>
-        </div>
-
+      <Router>
         <div>
-          {<button onClick={this.setPostViewMode} style={{marginRight:'2em',marginLeft:'24px'}}>Switch View</button>}
-            <div className="posts-wrapper">
-              {(selectedPost===null) && <h3>Categories</h3>}
-              {
-                (selectedPost===null) &&
-                categories
-                  .filter(function(cat) {
-                    // If no current category selected, the filter
-                    // will allow all categories to display
-                    if(currentCategory===null) {
-                      return true
-                    }
-                    // Otherwise, if there is a currently selected category
-                    // the filter will allow only one that to be displayed
-                    return (cat.name===currentCategory)
-                  })
-                  .map((cat) =>
-                    <div key={cat.name} className="cat-container">
-                      <h3 className="category-title" id={cat.name} onClick={this.selectCategoryByName}>{cat.name}</h3>
-                      {currentCategory!==null && <div className="show-all-link"><small onClick={this.showAllCategories}>Show All Categories</small></div>}
-                      <div>
-                        {
-                          posts
-                          .filter((post) => (post.category===cat.name && post.deleted===false))
-                          .map((post) => <SinglePost key={post.id} className="post-block" post={post}
-                            onVote={(postID, option, direction)=>this.placeVote2(postID, option, direction)/*this.placeVote(postID, option, v)*/}
-                            onSelectPost={postID=>this.getPostComments(postID)}></SinglePost>)
-                        }
-                      </div>
-                    </div>
-                  )
-              }
+          <div style={{marginLeft:24+'px'}}>
+            <h1 className="app-title">Readable</h1>
+            <div className="temp-style">
+              <button onClick={()=>this.openPostModal()} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
             </div>
-            {
-              (posts.length && selectedPost!==null) &&
-              <div>
-                <PostDetail key={selectedPost} className="post-block"
-                  post={posts.find(item=>(item.id===selectedPost))}
-                  onVote={(postID, option, v)=>this.placeVote2(postID, option, v)}
-                  onBackToCat={this.linkBackToCategory}
-                  onShowAllCats={this.showAllCategories}
-                  postComments={comments.filter(comment=>(comment.parentId===selectedPost))}
-                  handleVoteCom={(comID, option, v)=>this.placeVote2(comID, option, v)}></PostDetail>
-              </div>
-            }
+          </div>
+
+          {/* -------- App Home Screen -------- */}
+          <Route exact path="/" render = {() => (
+            categories.map(cat=>(
+              <SingleCategory
+                key={cat.name}
+                cats={categories}
+                categoryName={cat.name}
+                categoryPosts={posts.filter((post) => (post.category===cat.name && post.deleted===false))}
+                viewingAll={true}
+                sendVoteUpstream={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+                >
+              </SingleCategory>
+            ))
+          )}/>
+
+          {/* -------- Viewing a Single Category -------- */}
+          {
+            categories.map(cat=>(
+              <Route exact key={cat.name} path={"/"+cat.name} render = {() => (
+                <SingleCategory
+                  cats={categories}
+                  categoryName={cat.name}
+                  categoryPosts={posts.filter((post) => (post.category===cat.name && post.deleted===false))}
+                  viewingAll={false}
+                  sendVoteUpstream={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+                  >
+                </SingleCategory>
+              )}/>
+            ))
+          }
+
+          {/* -------- Post Detail Screen -------- */}
+          {
+            posts.map(post=>(
+              <Route exact key={post.id} path={"/"+post.category+"/"+post.id} render = {() => (
+                <PostDetail key={post.id} className="post-block"
+                  cats={categories}
+                  post={post}
+                  onVote={(option, v)=>this.placeVote(post.id, option, v)}
+                  postComments={comments.filter(comment=>(comment.parentId===post.id&&comment.deleted===false))}
+                  handleVoteCom={(comID, option, v)=>this.placeVote(comID, option, v)}
+                  onDeletePost={()=>this.handleDeletePost(post.id)}
+                  handleDeleteCom={(comID, postID)=>this.deleteCom(comID, postID)}
+                  onEditPost={()=>this.openEditModal()}
+                  handleNewCom={this.processNewComment}
+                  handleEditCom={this.processEditedComment}
+                  >
+                </PostDetail>
+              )}/>
+            ))
+          }
+
+          {/* -------- New Post Modal -------- */}
+              <Modal
+                className='modal'
+                overlayClassName='overlay'
+                isOpen={postModalOpen}
+                contentLabel='Modal'>
+                {postModalOpen &&
+                  <PostForm
+                    cats={categories}
+                    onSubmitPost={this.processNewPost}
+                    onCancelPost={this.cancelPost}>
+                  </PostForm>}
+              </Modal>
+
+          {/* -------- Edit Post Modal -------- */}
+              <Modal
+                className='modal'
+                overlayClassName='overlay'
+                isOpen={editModalOpen}
+                contentLabel='Modal'>
+                {editModalOpen &&
+                  <EditPostForm
+                    onSubmitEdit={this.processEditPost}
+                    onCancelEdit={this.cancelEdit}
+                    posts={posts}>
+                  </EditPostForm>}
+              </Modal>
         </div>
-      </div>
-    );
+      </Router>
+    )
   }
 }
 
@@ -233,7 +230,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         fetchData: () => dispatch(postsFetchData()),
-        fetchComments: (postID) => dispatch(commentsFetchData(postID))
     };
 };
 

@@ -34,65 +34,17 @@ console.log(inventory.find(item => {return(item.one==='oranges')}));
 singleParam => expression
 
 
-// fetchDataOLD() {
-//   const postsURL = `${process.env.REACT_APP_BACKEND}/posts`;
-//   const catURL = `${process.env.REACT_APP_BACKEND}/categories`;
-//   //console.log('fetching from url', postsURL);
-//   fetch(postsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-//     .then( (res) => { return res.json() })
-//     .then((postsData) => {
-//       this.setState({tempPosts:postsData})
-//       console.log("posts is: ", this.state.tempPosts)
-//     })
-//     .then(() => {
-//       //console.log('fetching from url', catURL);
-//       fetch(catURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-//         .then( (res) => {
-//           return res.json()
-//         })
-//         .then((catData) => {
-//           this.setState({categoryList:catData.categories})
-//           console.log("catData:", catData.categories)
-//         });
-//     })
-// }
+postComments={comments.filter(comment=>{console.log(comment.category);return(comment.category===currentCategory)})}></PostDetail>
 
-// fetchDataOLD(url) {
-//   this.setState({ isLoading: true });
-//
-//   fetch(url)
-//       .then((response) => {
-//           if (!response.ok) {
-//               throw Error(response.statusText);
-//           }
-//
-//           this.setState({ isLoading: false });
-//
-//           return response;
-//       })
-//       .then((response) => response.json())
-//       .then((items) => this.setState({ items })) // ES6 property value shorthand for { items: items }
-//       .catch(() => this.setState({ hasErrored: true }));
-// }
 
-// componentDidMount() {
-//   const catURL = `${process.env.REACT_APP_BACKEND}/categories`;
-//   console.log('fetching from url', catURL);
-//   fetch(catURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-//     .then( (res) => {
-//       return res.json()
-//     })
-//     .then((data) => {
-//       this.setState({backend:data.categories})
-//     });
-// }
 
 
 /*
 // THIS IS SOME JIBBER-JABBER. IT GETS NEWS HEADLINES.
 let headlines = []
 function getHeadlines() {
-  let newsAPI = "https://newsapi.org/v1/articles?source=the-new-york-times&sortBy=top&category=technology&apiKey=5c55406c3ac24761afd7cd83a1217052"
+  //let newsAPI = "https://newsapi.org/v1/articles?source=the-new-york-times&sortBy=top&category=technology&apiKey=5c55406c3ac24761afd7cd83a1217052"
+  let newsAPI = "https://newsapi.org/v2/everything?q=react&sortBy=publishedAt&apiKey=5c55406c3ac24761afd7cd83a1217052
   fetch(newsAPI)//, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
     .then( (res) => { return res.json() })
     .then((articlesData) => {
