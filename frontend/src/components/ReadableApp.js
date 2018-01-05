@@ -23,6 +23,7 @@ class ReadableApp extends Component {
   state = {
     postModalOpen: false,
     editModalOpen: false,
+    currentPost: null
   }
 
   static propTypes = {
@@ -83,18 +84,22 @@ class ReadableApp extends Component {
   }
 
   // Control the Edit Post modal
-  openEditModal = () => this.setState(() => ({ editModalOpen: true }))
+  openEditModal = (pID) => this.setState(() => ({ 
+    currentPost: this.props.posts.find((post)=>post.id === pID), 
+    editModalOpen: true }))  
   closeEditModal = () => this.setState(() => ({ editModalOpen: false }))
-  processEditPost = (evt, postID, body) => {
+  processEditPost = (evt, postID, title, body) => {
     evt.preventDefault()
     this.props.store.dispatch(editPost({
       "id" : postID,
-      //"timestamp" : Date.now(),
+      "timestamp" : Date.now(),        
+      "title" : title,
       "body" : body
       })
     )
     this.closeEditModal()
   }
+  
   cancelEdit = (evt) => {
     evt.preventDefault()
     this.closeEditModal()
@@ -138,9 +143,8 @@ class ReadableApp extends Component {
           </div>
           
           <Switch>
-
           {/* -------- App Home Screen -------- */}
-          <Route exact path="/" render = {() => (
+          <Route exact path="/" render = {({history}) => (
             categories.map(cat=>(
               <SingleCategory
                 key={cat.name}
@@ -149,10 +153,12 @@ class ReadableApp extends Component {
                 categoryPosts={posts.filter((post) => (post.category===cat.name && post.deleted===false))}
                 viewingAll={true}
                 sendVoteUpstream={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+                sendUpDeletePost={(postID)=>this.handleDeletePost(postID)}
+                sendUpEditPost={(postID)=>this.openEditModal(postID)}
                 >
               </SingleCategory>
             ))
-          )}/>
+          )}/>          
 
           {/* -------- Viewing a Single Category -------- */}
           {
@@ -164,6 +170,8 @@ class ReadableApp extends Component {
                   categoryPosts={posts.filter((post) => (post.category===cat.name && post.deleted===false))}
                   viewingAll={false}
                   sendVoteUpstream={(postID, option, direction)=>this.placeVote(postID, option, direction)}
+                  sendUpDeletePost={(postID)=>this.handleDeletePost(postID)}
+                  sendUpEditPost={(postID)=>this.openEditModal(postID)}                  
                   >
                 </SingleCategory>
               )}/>
@@ -182,15 +190,13 @@ class ReadableApp extends Component {
                   handleVoteCom={(comID, option, v)=>this.placeVote(comID, option, v)}
                   onDeletePost={()=>this.handleDeletePost(post.id)}
                   handleDeleteCom={(comID, postID)=>this.deleteCom(comID, postID)}
-                  onEditPost={()=>this.openEditModal()}
+                  onEditPost={(postID)=>this.openEditModal(postID)}
                   handleNewCom={this.processNewComment}
                   handleEditCom={this.processEditedComment}
                   >
                 </PostDetail>
               )}/>
             ))
-            
-            
           }
           <Route render={() => (
             <div className="post-wrapper">
@@ -205,36 +211,38 @@ class ReadableApp extends Component {
             </div>
           )}/>
 
+          </Switch>
           {/* -------- New Post Modal -------- */}
-              <Modal
-                className='modal'
-                overlayClassName='overlay'
-                isOpen={postModalOpen}
-                ariaHideApp={false}
-                contentLabel='Modal'>
-                {postModalOpen &&
-                  <PostForm
-                    cats={categories}
-                    onSubmitPost={this.processNewPost}
-                    onCancelPost={this.cancelPost}>
-                  </PostForm>}
-              </Modal>
+            <Modal
+              className='modal'
+              overlayClassName='overlay'
+              isOpen={postModalOpen}
+              ariaHideApp={false}
+              contentLabel='Modal'>
+              {postModalOpen &&
+                <PostForm
+                  cats={categories}
+                  onSubmitPost={this.processNewPost}
+                  onCancelPost={this.cancelPost}>
+                </PostForm>}
+            </Modal>
 
           {/* -------- Edit Post Modal -------- */}
-              <Modal
-                className='modal'
-                overlayClassName='overlay'
-                isOpen={editModalOpen}
-                ariaHideApp={false}
-                contentLabel='Modal'>
-                {editModalOpen &&
-                  <EditPostForm
-                    onSubmitEdit={this.processEditPost}
-                    onCancelEdit={this.cancelEdit}
-                    posts={posts}>
-                  </EditPostForm>}
-              </Modal>
-            </Switch>
+            <Modal
+              className='modal'
+              overlayClassName='overlay'
+              isOpen={editModalOpen}
+              ariaHideApp={false}
+              contentLabel='Modal'>
+              {editModalOpen &&
+                <EditPostForm
+                  onSubmitEdit={this.processEditPost}
+                  onCancelEdit={this.cancelEdit}
+                  // posts={posts}>
+                  post={this.state.currentPost}>                    
+                </EditPostForm>}
+            </Modal>
+            
         </div>
       </Router>
     )

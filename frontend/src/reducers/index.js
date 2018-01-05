@@ -32,6 +32,7 @@ function posts (state = [], action) {
     case EDIT_POST :
       index = state.findIndex((item)=>(item.id===id))
       tempCopy = state.slice()
+      tempCopy[index]["title"] = title
       tempCopy[index]["body"] = body
       return tempCopy
 

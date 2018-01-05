@@ -1,5 +1,4 @@
 export const ADD_POST = 'ADD_POST'
-//export const ADD_POST_FETCH_SUCCESS = 'ADD_POST_FETCH_SUCCESS'
 export const EDIT_POST = 'EDIT_POST'
 export const REMOVE_POST = 'REMOVE_POST'
 export const VOTE_POST = 'VOTE_POST'
@@ -23,14 +22,6 @@ const headers = {
 
 
 // ------------ CATEGORIES-SPECIFIC ACTIONS ------------>
-// export function catsFetchData() {
-//   const catsURL = `${process.env.REACT_APP_BACKEND}/categories`;
-//   return (dispatch) => {
-//       fetch(catsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-//         .then((res) => { return res.json() })
-//         .then((catsData) => dispatch(catsFetchDataSuccess(catsData.categories)));
-//   };
-// }
 export function catsFetchData() {
   const catsURL = `${process.env.REACT_APP_BACKEND}/categories`;
   return (dispatch) => {
@@ -52,88 +43,14 @@ export function catsFetchDataSuccess(categories) {
 
 
 // ------------ POST-SPECIFIC ACTIONS ------------>
-// export function postsFetchData() {
-//   const postsURL = `${process.env.REACT_APP_BACKEND}/posts`;
-//   return (dispatch) => {
-//       fetch(postsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-//         .then(res => res.json())
-//         .then(posts => {
-//            for(let post of posts) { dispatch(commentsFetchData(post.id)); return posts }
-//          })
-//         .then(posts => dispatch(postsFetchDataSuccess(posts)))
-//         .then(() => dispatch(catsFetchData()));
-//   };
-// }
-// 
-// export function postsFetchDataSuccess(posts) {
-//     return {
-//         type: POSTS_FETCH_DATA_SUCCESS,
-//         posts
-//     };
-// }
-
-// Get all posts
-// Get all comments
 export function postsFetchData() {
   const postsURL = `${process.env.REACT_APP_BACKEND}/posts`;
   return (dispatch) => {
       fetch(postsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
         .then(res => res.json())
-        //.then(posts => {dispatch(postsFetchDataSuccess(posts)); return posts})
-        // .then(posts => {
-        //   let postsWithComments = posts.filter(post=>(post.commentCount > 0)).map(post=>post.id)
-        // //   dispatch(allCommentsFetchData(postsWithComments))
-        // //    //for(let post of posts) { dispatch(commentsFetchData(post.id)); return posts }
-        // })
-        //.then(posts => posts.filter(post=>(post.commentCount > 0)).map(post=>post.id))
-        //.then(postsWithComments => dispatch(allCommentsFetchData(postsWithComments)))
-        //   dispatch(allCommentsFetchData(postsWithComments))
-        //    //for(let post of posts) { dispatch(commentsFetchData(post.id)); return posts }
-        //}
-        //.then(() => dispatch(catsFetchData()));
         .then(posts => {dispatch(postsFetchDataSuccess(posts)); return posts})
         .then(posts => dispatch(allCommentsFetchData(posts)));        
       }
-}
-
-// export function allCommentsFetchData(posts) {
-//   let postsWithComments = posts.filter(post=>(post.commentCount > 0)).map(post=>post.id)
-//   let commentURLs = postsWithComments.map((postID)=> `${process.env.REACT_APP_BACKEND}/posts/${postID}/comments`)
-//   let fetches = commentURLs.map(url => fetch(url, {headers: headers}).then(res => res.json()))
-// 
-//   // We have to fetch from multiple URLs to get comments from each post
-//   Promise.all(fetches)
-//     .then(allComments => {
-//       let allCommentsFlat = allComments.reduce(
-//         (acc, cur) => acc.concat(cur),
-//         []
-//       );
-//       console.log(allCommentsFlat)
-//       return allCommentsFlat
-//     })
-//     //.then((allCommentsFlat) => {return dispatch(commentsFetchDataSuccess(allCommentsFlat))});
-// 
-//   const catsURL = `${process.env.REACT_APP_BACKEND}/categories`;
-//   return (dispatch) => {
-//       fetch(catsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-//         .then((res) => { return res.json() })
-//         .then((catsData) => dispatch(catsFetchDataSuccess(catsData.categories)));
-//   };
-// }
-export function allCommentsFetchData(posts) {
-  let postsWithComments = posts.filter(post=>(post.commentCount > 0)).map(post=>post.id)
-  let commentURLs = postsWithComments.map((postID)=> `${process.env.REACT_APP_BACKEND}/posts/${postID}/comments`)
-  let fetches = commentURLs.map(url => fetch(url, {headers: headers}).then(res => res.json()))
-  
-  return (dispatch) => {
-    // We have to fetch from multiple URLs to get comments from each post
-    Promise.all(fetches)
-      .then(allComments => 
-        allComments.reduce((acc, cur) => 
-          acc.concat(cur), [])
-      )
-      .then(allCommentsFlat => dispatch(commentsFetchDataSuccess(allCommentsFlat)));
-  }
 }
 
 export function postsFetchDataSuccess(posts) {
@@ -142,21 +59,6 @@ export function postsFetchDataSuccess(posts) {
         posts
     };
 }
-
-// export function allCommentsFetchData(postsWithComments) {
-//   const postsURL = `${process.env.REACT_APP_BACKEND}/posts`;
-//   return (dispatch) => {
-//       fetch(postsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-//         .then(res => res.json())
-//         .then(posts => {
-//            for(let post of posts) { dispatch(commentsFetchData(post.id)); return posts }
-//          })
-//         .then(posts => dispatch(postsFetchDataSuccess(posts)))
-//         .then(() => dispatch(catsFetchData()));
-//   };
-// }
-
-
 
 export function addPost({ id,timestamp,title,body,author,category }) {
   const postsURL = `${process.env.REACT_APP_BACKEND}/posts`;
@@ -191,30 +93,25 @@ export function addPostSuccess ({ id,timestamp,title,body,author,category }) {
      }
 }
 
-// export function editPostORIG ({ id,body }) {
-//      return {
-//        type: EDIT_POST,
-//        id,
-//        body
-//      }
-// }
-
-//export function editPost ({ id, timestamp, body }) {
-export function editPost ({ id, body }) {
-     return {
-       type: EDIT_POST,
-       id,
-       body
-     }
+export function editPost({ id, timestamp, title, body }) {
+  const postsURL = `${process.env.REACT_APP_BACKEND}/posts/` + id;
+  return (dispatch) => {
+    fetch(postsURL, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify({ "timestamp": timestamp, "title": title, "body": body }),
+      })
+      .then(()=>dispatch(editPostSuccess({ id, title, body, timestamp })))
+  };  
 }
 
-//export function editPostSuccess ({ id, timestamp, body }) {
-export function editPostSuccess ({ id, body }) {
+export function editPostSuccess ({ id, title, body, timestamp }) {
      return {
        type: EDIT_POST,
        id,
-       //timestamp,
-       body
+       title,
+       body,
+       timestamp
      }
 }
 
@@ -263,6 +160,22 @@ export function votePostSuccess ({ id, up }) {
 
 
 // ------------ COMMENTS-SPECIFIC ACTIONS ------------>
+export function allCommentsFetchData(posts) {
+  let postsWithComments = posts.filter(post=>(post.commentCount > 0)).map(post=>post.id)
+  let commentURLs = postsWithComments.map((postID)=> `${process.env.REACT_APP_BACKEND}/posts/${postID}/comments`)
+  let fetches = commentURLs.map(url => fetch(url, {headers: headers}).then(res => res.json()))
+  
+  return (dispatch) => {
+    // We have to fetch from multiple URLs to get comments from each post
+    Promise.all(fetches)
+      .then(allComments => 
+        allComments.reduce((acc, cur) => 
+          acc.concat(cur), [])
+      )
+      .then(allCommentsFlat => dispatch(commentsFetchDataSuccess(allCommentsFlat)));
+  }
+}
+
 export function adjustCommentCount ({ id, up }) {
   return {
     type: ADJUST_COUNT,
@@ -271,43 +184,12 @@ export function adjustCommentCount ({ id, up }) {
   }
 }
 
-// export function commentsFetchData(postID) {
-//   const commentsURL = `${process.env.REACT_APP_BACKEND}/posts/${postID}/comments`;
-//   return (dispatch) => {
-//       fetch(commentsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-//         .then((res) => { return res.json() })
-//         .then((comments) => dispatch(commentsFetchDataSuccess(comments)));
-//   };
-// }
-export function commentsFetchData(postID) {
-  const commentsURL = `${process.env.REACT_APP_BACKEND}/posts/${postID}/comments`;
-  return (dispatch) => {
-      fetch(commentsURL, { headers: { 'Authorization': 'hi-my-name-is-shawn' }} )
-        .then((res) => { return res.json() })
-        .then((comments) => {return dispatch(commentsFetchDataSuccess(comments))});
-  };
-}
-
 export function commentsFetchDataSuccess(comments) {
   return {
       type: COMMENTS_FETCH_DATA_SUCCESS,
       comments
   };
 }
-
-// export function addCommentORIG ({ id,parentId,timestamp,body,author }) {
-//   return {
-//     type: ADD_COMMENT,
-//     id,
-//     parentId,
-//     timestamp,
-//     body,
-//     author,
-//     voteScore:0,
-//     deleted:false,
-//     parentDeleted:false
-//   }
-// }
 
 export function addComment({ id,parentId,timestamp,body,author }) {
   const postsURL = `${process.env.REACT_APP_BACKEND}/comments`;
@@ -339,14 +221,6 @@ export function addCommentSuccess ({ id,parentId,timestamp,body,author }) {
     parentDeleted:false
   }
 }
-
-// export function editComment ({ id,body }) {
-//   return {
-//     type: EDIT_COMMENT,
-//     id,
-//     body
-//   }
-// }
 
 export function editComment({ id, timestamp, body }) {
   const postsURL = `${process.env.REACT_APP_BACKEND}/comments/` + id;
@@ -387,13 +261,6 @@ export function removeCommentSuccess ({ id }) {
        id
      }
 }
-
-// export function removeComment ({ id }) {
-//   return {
-//     type: REMOVE_COMMENT,
-//     id
-//   }
-// }
 
 export function voteComment ({ id, up }) {
   let option = up ? "upVote" : "downVote"
