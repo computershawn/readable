@@ -63,7 +63,7 @@ class PostDetail extends Component {
                   </a>
                 </div>
                 <div className="action-icon-cont">
-                  <a href="/" onClick={e=>{e.preventDefault(); onEditPost()}}>
+                  <a href="/" onClick={e=>{e.preventDefault(); onEditPost(post.id)}}>
                     <EditIcon className="action-icon-btn action-icon-btn-edit" />
                   </a>
                 </div>
@@ -112,6 +112,7 @@ class PostDetail extends Component {
           className='modal'
           overlayClassName='overlay'
           isOpen={commentNewModalOpen}
+          ariaHideApp={false}
           contentLabel='Modal'>
           {commentNewModalOpen &&
             <CommentForm
@@ -127,6 +128,7 @@ class PostDetail extends Component {
           className='modal'
           overlayClassName='overlay'
           isOpen={commentEditModalOpen}
+          ariaHideApp={false}
           contentLabel='Modal'>
           {commentEditModalOpen &&
             <EditComForm

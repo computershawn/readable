@@ -20,7 +20,7 @@ class EditPostForm extends React.Component {
   static propTypes = {
     onSubmitEdit: PropTypes.func.isRequired,
     onCancelEdit: PropTypes.func.isRequired,
-    posts: PropTypes.array.isRequired
+    post: PropTypes.object.isRequired    
   }
 
   handleInputChange(event) {
@@ -34,23 +34,30 @@ class EditPostForm extends React.Component {
   }
 
   render() {
-    const { postText } = this.state
-    const { posts, onSubmitEdit, onCancelEdit } = this.props
-
+    const { postText, postTitle } = this.state
+    const { post, onSubmitEdit, onCancelEdit } = this.props
+    
     return (
         <Route render={(props) => {
-          let thisPost = posts.find((post)=>((props.location.pathname).split('/')[2]===post.id))
-          let postID = thisPost.id
-          let category = thisPost.category
-          let title = thisPost.title
-          let text = thisPost.body
-          let author = thisPost.author
+          let postID = post.id
+          let category = post.category
+          let title = post.title
+          let text = post.body
+          let author = post.author
 
           return (
-          <form onSubmit={event=>onSubmitEdit(event, postID, postText)}>
+          <form onSubmit={event=>onSubmitEdit(event, postID, postTitle, postText)}>
             <h3>Edit Post<span style={{fontWeight:'400'}}> {title}</span></h3>
             <small>Category: {capitalize(category)}&nbsp;&nbsp;|&nbsp;&nbsp;Author: {capitalize(author)}</small>
 
+
+            {/* Enter Title */}
+            <div className="form-item">
+              <label>
+                <span className="item-label">Title</span>
+                <input className="form-input" name="postTitle" defaultValue={title} type="text" onChange={this.handleInputChange} required />
+              </label>
+            </div>
 
             {/* Enter Text */}
             <div className="form-item">

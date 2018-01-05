@@ -15,7 +15,10 @@ class SingleCategory extends Component {
     cats: PropTypes.array.isRequired,
     categoryName: PropTypes.string.isRequired,
     categoryPosts: PropTypes.array.isRequired,
-    viewingAll: PropTypes.bool.isRequired
+    viewingAll: PropTypes.bool.isRequired,
+    sendVoteUpstream: PropTypes.func.isRequired,
+    sendUpDeletePost: PropTypes.func.isRequired,
+    sendUpEditPost: PropTypes.func.isRequired
   }
 
   sortByDate = (event) => {
@@ -37,7 +40,7 @@ class SingleCategory extends Component {
   }
 
   render() {
-    let { cats, categoryName, viewingAll, sendVoteUpstream } = this.props
+    let { cats, categoryName, viewingAll, sendVoteUpstream, sendUpDeletePost, sendUpEditPost } = this.props
     let { sortMethod } = this.state
     return (
       <div className="posts-wrapper">
@@ -67,7 +70,8 @@ class SingleCategory extends Component {
             .sort(sortBy((sortMethod)))
             .map((post) => <SinglePost key={post.id} className="post-block" post={post}
               onVote={(option, direction)=>sendVoteUpstream(post.id, option, direction)}
-              onSelectPost={(event,postID)=>this.getPostComments(event,postID)}></SinglePost>)
+              onDelete={()=>sendUpDeletePost(post.id)}
+              onEdit={()=>sendUpEditPost(post.id)}></SinglePost>)
             }
         </div>
       </div>
