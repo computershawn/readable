@@ -10,8 +10,9 @@ import PostDetail from './PostDetail'
 import PostForm from './PostForm'
 import EditPostForm from './EditPostForm'
 import SingleCategory from './SingleCategory'
+import CategoryNav from './CategoryNav'
 import AddIcon from 'react-icons/lib/md/add-circle-outline'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 const uuidv4 = require('uuid/v4')
 
@@ -135,6 +136,8 @@ class ReadableApp extends Component {
               <button onClick={()=>this.openPostModal()} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
             </div>
           </div>
+          
+          <Switch>
 
           {/* -------- App Home Screen -------- */}
           <Route exact path="/" render = {() => (
@@ -186,7 +189,21 @@ class ReadableApp extends Component {
                 </PostDetail>
               )}/>
             ))
+            
+            
           }
+          <Route render={() => (
+            <div className="post-wrapper">
+              <CategoryNav categoryList={categories} />
+              <div className="not-found">
+                <h3>¯\_(ツ)_/¯</h3>
+                <h3 className="sorry">Sorry, there's nothing here</h3>
+                <p className="nothing-here">
+                  Click one of the above categories to browse other posts.
+                </p>                
+              </div>
+            </div>
+          )}/>
 
           {/* -------- New Post Modal -------- */}
               <Modal
@@ -217,6 +234,7 @@ class ReadableApp extends Component {
                     posts={posts}>
                   </EditPostForm>}
               </Modal>
+            </Switch>
         </div>
       </Router>
     )
@@ -233,7 +251,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // fetchData: () => dispatch(postsFetchData()),
         fetchData: () => dispatch(catsFetchData()),        
     };
 };

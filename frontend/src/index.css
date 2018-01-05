@@ -338,9 +338,21 @@ hr.category-title {
   margin-left: 8px;
   margin-bottom: 30px;
 }
-.no-posts em {
-  color: #757575;
+.no-posts em, .nothing-here {
+  color: #484848;
 }
 
+p.nothing-here {
+  margin-top: .5em;
+}
+
+h3.sorry {
+  margin-bottom: .5em;
+}
+
+div.not-found {
+  margin-top: 3em;
+  margin-left: 8px;
+}
 
 
