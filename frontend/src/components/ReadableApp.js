@@ -3,7 +3,7 @@ import Modal from 'react-modal'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import './App.css'
-import { addPost, editPost, removePost, postsFetchData,
+import { addPost, editPost, removePost, catsFetchData,
   votePost, voteComment, addComment, editComment,
   removeComment, adjustCommentCount} from '../actions'
 import PostDetail from './PostDetail'
@@ -55,8 +55,8 @@ class ReadableApp extends Component {
   }
 
   deleteCom = (comID, postID) => {
-    this.props.store.dispatch(removeComment({ "id" : comID }))
     this.props.store.dispatch(adjustCommentCount({ "id" : postID, "up" : false }))
+    this.props.store.dispatch(removeComment({ "id" : comID }))
   }
 
   // Control the New Post modal
@@ -88,6 +88,7 @@ class ReadableApp extends Component {
     evt.preventDefault()
     this.props.store.dispatch(editPost({
       "id" : postID,
+      //"timestamp" : Date.now(),
       "body" : body
       })
     )
@@ -115,7 +116,8 @@ class ReadableApp extends Component {
   processEditedComment = (commentID, text) => {
     this.props.store.dispatch(editComment({
         "id" : commentID,
-        "body" : text
+        "timestamp" : Date.now(),        
+        "body" : text,
       })
     )
   }
@@ -191,6 +193,7 @@ class ReadableApp extends Component {
                 className='modal'
                 overlayClassName='overlay'
                 isOpen={postModalOpen}
+                ariaHideApp={false}
                 contentLabel='Modal'>
                 {postModalOpen &&
                   <PostForm
@@ -205,6 +208,7 @@ class ReadableApp extends Component {
                 className='modal'
                 overlayClassName='overlay'
                 isOpen={editModalOpen}
+                ariaHideApp={false}
                 contentLabel='Modal'>
                 {editModalOpen &&
                   <EditPostForm
@@ -229,7 +233,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchData: () => dispatch(postsFetchData()),
+        // fetchData: () => dispatch(postsFetchData()),
+        fetchData: () => dispatch(catsFetchData()),        
     };
 };
 

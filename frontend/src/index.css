@@ -333,3 +333,14 @@ hr.category-title {
 .post-deleted {
   padding-left: 8px;
 }
+
+.no-posts {
+  margin-left: 8px;
+  margin-bottom: 30px;
+}
+.no-posts em {
+  color: #757575;
+}
+
+
+
