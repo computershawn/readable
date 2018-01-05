@@ -101,6 +101,7 @@ function comments (state = [], action) {
       index = state.findIndex((item)=>(item.id===id))
       tempCopy = state.slice()
       tempCopy[index]["body"] = body
+      tempCopy[index]["timestamp"] = timestamp
       return tempCopy
 
     case VOTE_COMMENT :

@@ -3,15 +3,16 @@ import Modal from 'react-modal'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import './App.css'
-import { addPost, editPost, removePost, postsFetchData,
+import { addPost, editPost, removePost, catsFetchData,
   votePost, voteComment, addComment, editComment,
   removeComment, adjustCommentCount} from '../actions'
 import PostDetail from './PostDetail'
 import PostForm from './PostForm'
 import EditPostForm from './EditPostForm'
 import SingleCategory from './SingleCategory'
+import CategoryNav from './CategoryNav'
 import AddIcon from 'react-icons/lib/md/add-circle-outline'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 const uuidv4 = require('uuid/v4')
 
@@ -55,8 +56,8 @@ class ReadableApp extends Component {
   }
 
   deleteCom = (comID, postID) => {
-    this.props.store.dispatch(removeComment({ "id" : comID }))
     this.props.store.dispatch(adjustCommentCount({ "id" : postID, "up" : false }))
+    this.props.store.dispatch(removeComment({ "id" : comID }))
   }
 
   // Control the New Post modal
@@ -88,6 +89,7 @@ class ReadableApp extends Component {
     evt.preventDefault()
     this.props.store.dispatch(editPost({
       "id" : postID,
+      //"timestamp" : Date.now(),
       "body" : body
       })
     )
@@ -115,7 +117,8 @@ class ReadableApp extends Component {
   processEditedComment = (commentID, text) => {
     this.props.store.dispatch(editComment({
         "id" : commentID,
-        "body" : text
+        "timestamp" : Date.now(),        
+        "body" : text,
       })
     )
   }
@@ -133,6 +136,8 @@ class ReadableApp extends Component {
               <button onClick={()=>this.openPostModal()} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
             </div>
           </div>
+          
+          <Switch>
 
           {/* -------- App Home Screen -------- */}
           <Route exact path="/" render = {() => (
@@ -184,13 +189,28 @@ class ReadableApp extends Component {
                 </PostDetail>
               )}/>
             ))
+            
+            
           }
+          <Route render={() => (
+            <div className="post-wrapper">
+              <CategoryNav categoryList={categories} />
+              <div className="not-found">
+                <h3>¯\_(ツ)_/¯</h3>
+                <h3 className="sorry">Sorry, there's nothing here</h3>
+                <p className="nothing-here">
+                  Click one of the above categories to browse other posts.
+                </p>                
+              </div>
+            </div>
+          )}/>
 
           {/* -------- New Post Modal -------- */}
               <Modal
                 className='modal'
                 overlayClassName='overlay'
                 isOpen={postModalOpen}
+                ariaHideApp={false}
                 contentLabel='Modal'>
                 {postModalOpen &&
                   <PostForm
@@ -205,6 +225,7 @@ class ReadableApp extends Component {
                 className='modal'
                 overlayClassName='overlay'
                 isOpen={editModalOpen}
+                ariaHideApp={false}
                 contentLabel='Modal'>
                 {editModalOpen &&
                   <EditPostForm
@@ -213,6 +234,7 @@ class ReadableApp extends Component {
                     posts={posts}>
                   </EditPostForm>}
               </Modal>
+            </Switch>
         </div>
       </Router>
     )
@@ -229,7 +251,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchData: () => dispatch(postsFetchData()),
+        fetchData: () => dispatch(catsFetchData()),        
     };
 };
 

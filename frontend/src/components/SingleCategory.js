@@ -48,14 +48,18 @@ class SingleCategory extends Component {
           <CategoryNav categoryList={cats} />
         }
 
-        <div className="nav-options">
-          <span>Sort By | </span>
-          <a href="/" onClick={this.sortByDate}><strong>DATE</strong></a>&nbsp;|&nbsp;
-          <a href="/" onClick={this.sortByPop}><strong>POPULARITY</strong></a>
-        </div>
-        {/*!viewingAll &&
-          <div className="nav-options"><Link to={"/"}><strong>View All Categories</strong></Link></div>
-        */}
+        {(this.props.categoryPosts.length > 0)
+          ?
+          <div className="nav-options">
+            <span>Sort By | </span>
+            <a href="/" onClick={this.sortByDate}><strong>DATE</strong></a>&nbsp;|&nbsp;
+            <a href="/" onClick={this.sortByPop}><strong>POPULARITY</strong></a>
+          </div>
+          :
+          <div className="no-posts">
+            <em>No posts for this category</em>
+          </div>
+        }
 
         <div>
            {
