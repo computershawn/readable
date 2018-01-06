@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import sortBy from 'sort-by'
 import { Link } from 'react-router-dom'
 import { capitalize } from '../utils/helpers'
+import RightArrowIcon from 'react-icons/lib/md/keyboard-arrow-right'
 
 class SingleCategory extends Component {
   state = {
@@ -24,13 +25,13 @@ class SingleCategory extends Component {
 
   sortByDate = (option) => {
     this.setState({
-      sortMethod: (option===0) ? 'timestamp' : '-timestamp'
-    })    
+      sortMethod: (option === 0) ? 'timestamp' : '-timestamp'
+    })
   }
 
   sortByPop = (option) => {
     this.setState({
-      sortMethod: (option===0) ? 'voteScore' : '-voteScore'      
+      sortMethod: (option === 0) ? 'voteScore' : '-voteScore'
     })
   }
 
@@ -44,27 +45,27 @@ class SingleCategory extends Component {
     return (
       <div className="posts-wrapper">
         {viewingAll &&
-          <h3 className="category-title"><Link to={"/"+categoryName}>{capitalize(categoryName)}</Link></h3>
+          <h3 className="category-title"><Link to={"/"+categoryName}>{capitalize(categoryName)}<RightArrowIcon /></Link></h3>
         }
         {!viewingAll &&
           <CategoryNav categoryList={cats} />
         }
-        
-        {(this.props.categoryPosts.length > 0)
-          ?
+
+        {(this.props.categoryPosts.length > 1) &&
           <div className="nav-options">
             <span>Sort By&nbsp;&nbsp;&nbsp;</span>
-            <SortToggle 
-              isCurrent={sortMethod.replace('-','')==='timestamp'}
+            <SortToggle
+              isCurrent={sortMethod.replace('-','') === 'timestamp'}
               method='DATE'
               onChangeSort={(updown)=>this.sortByDate(updown)} />
             &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
             <SortToggle
-              isCurrent={sortMethod.replace('-','')==='voteScore'}
+              isCurrent={sortMethod.replace('-','') === 'voteScore'}
               method='POPULARITY'
-              onChangeSort={(updown)=>this.sortByPop(updown)} />              
-          </div>          
-          :
+              onChangeSort={(updown)=>this.sortByPop(updown)} />
+          </div>
+        }
+        {(this.props.categoryPosts.length === 0) &&
           <div className="no-posts">
             <em>No posts for this category</em>
           </div>

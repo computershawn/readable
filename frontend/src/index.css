@@ -8,6 +8,7 @@ body {
 .post-wrapper, .posts-wrapper {
   margin-left: 24px;
   margin-right: 24px;
+  margin-bottom: 60px;
 }
 
 .post-block {
@@ -53,6 +54,7 @@ hr.category-title {
 
 .category-title {
   margin-left: 8px;
+  margin-bottom: .5em;
   font-weight: 500;
 }
 
@@ -306,14 +308,10 @@ hr.category-title {
   /* margin-left: 24px; */
 }
 
-/* .category-nav {
-  font-weight: 500;
-} */
-
 .nav-options {
   font-size: .8em;
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: 2px;
+  margin-bottom: .5em;
   padding-left: 8px;
   display: inline-block;
 }
@@ -358,5 +356,3 @@ div.not-found {
 .faded {
   opacity: .72;
 }
-
-
