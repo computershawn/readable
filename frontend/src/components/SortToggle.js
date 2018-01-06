@@ -16,7 +16,7 @@ class SortToggle extends Component {
   }
   
   toggleDirection = () => {
-    let temp = (this.state.direction == 0) ? 1 : 0
+    let temp = (this.state.direction === 0) ? 1 : 0
     this.setState({
       direction: temp
     })
@@ -30,7 +30,7 @@ class SortToggle extends Component {
         <a href='/' onClick={(e)=>{ e.preventDefault(); this.toggleDirection(); onChangeSort(direction) }}>
           { method }&nbsp;
           {
-            ( direction==0 ) ? <span>&#8675;</span> : <span>&#8673;</span>
+            ( direction === 0 ) ? <span>&#8675;</span> : <span>&#8673;</span>
           }
         </a>
       </span>

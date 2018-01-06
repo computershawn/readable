@@ -24,13 +24,13 @@ class SingleCategory extends Component {
 
   sortByDate = (option) => {
     this.setState({
-      sortMethod: (option==0) ? 'timestamp' : '-timestamp'
+      sortMethod: (option===0) ? 'timestamp' : '-timestamp'
     })    
   }
 
   sortByPop = (option) => {
     this.setState({
-      sortMethod: (option==0) ? 'voteScore' : '-voteScore'      
+      sortMethod: (option===0) ? 'voteScore' : '-voteScore'      
     })
   }
 
