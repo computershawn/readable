@@ -8,7 +8,7 @@ class EditComForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      commText: null,
+      commText: this.props.defaultText,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this)

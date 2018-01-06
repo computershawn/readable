@@ -84,22 +84,22 @@ class ReadableApp extends Component {
   }
 
   // Control the Edit Post modal
-  openEditModal = (pID) => this.setState(() => ({ 
-    currentPost: this.props.posts.find((post)=>post.id === pID), 
-    editModalOpen: true }))  
+  openEditModal = (pID) => this.setState(() => ({
+    currentPost: this.props.posts.find((post)=>post.id === pID),
+    editModalOpen: true }))
   closeEditModal = () => this.setState(() => ({ editModalOpen: false }))
   processEditPost = (evt, postID, title, body) => {
     evt.preventDefault()
     this.props.store.dispatch(editPost({
       "id" : postID,
-      "timestamp" : Date.now(),        
+      "timestamp" : Date.now(),
       "title" : title,
       "body" : body
       })
     )
     this.closeEditModal()
   }
-  
+
   cancelEdit = (evt) => {
     evt.preventDefault()
     this.closeEditModal()
@@ -122,7 +122,7 @@ class ReadableApp extends Component {
   processEditedComment = (commentID, text) => {
     this.props.store.dispatch(editComment({
         "id" : commentID,
-        "timestamp" : Date.now(),        
+        "timestamp" : Date.now(),
         "body" : text,
       })
     )
@@ -141,7 +141,7 @@ class ReadableApp extends Component {
               <button onClick={()=>this.openPostModal()} className="icon-btn">New Post <AddIcon style={{verticalAlign:'-.1em'}}/></button>
             </div>
           </div>
-          
+
           <Switch>
           {/* -------- App Home Screen -------- */}
           <Route exact path="/" render = {({history}) => (
@@ -158,7 +158,7 @@ class ReadableApp extends Component {
                 >
               </SingleCategory>
             ))
-          )}/>          
+          )}/>
 
           {/* -------- Viewing a Single Category -------- */}
           {
@@ -171,7 +171,7 @@ class ReadableApp extends Component {
                   viewingAll={false}
                   sendVoteUpstream={(postID, option, direction)=>this.placeVote(postID, option, direction)}
                   sendUpDeletePost={(postID)=>this.handleDeletePost(postID)}
-                  sendUpEditPost={(postID)=>this.openEditModal(postID)}                  
+                  sendUpEditPost={(postID)=>this.openEditModal(postID)}
                   >
                 </SingleCategory>
               )}/>
@@ -206,7 +206,7 @@ class ReadableApp extends Component {
                 <h3 className="sorry">Sorry, there's nothing here</h3>
                 <p className="nothing-here">
                   Click one of the above categories to browse other posts.
-                </p>                
+                </p>
               </div>
             </div>
           )}/>
@@ -238,11 +238,10 @@ class ReadableApp extends Component {
                 <EditPostForm
                   onSubmitEdit={this.processEditPost}
                   onCancelEdit={this.cancelEdit}
-                  // posts={posts}>
-                  post={this.state.currentPost}>                    
+                  post={this.state.currentPost}>
                 </EditPostForm>}
             </Modal>
-            
+
         </div>
       </Router>
     )
@@ -259,7 +258,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchData: () => dispatch(catsFetchData()),        
+        fetchData: () => dispatch(catsFetchData()),
     };
 };
 

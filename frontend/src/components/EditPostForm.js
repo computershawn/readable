@@ -7,11 +7,12 @@ import { Route } from 'react-router-dom'
 class EditPostForm extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      postCategory: null,
-      postAuthor: null,
-      postTitle: null,
-      postText: null,
+      postCategory: this.props.post.category,
+      postAuthor: this.props.post.author,
+      postTitle: this.props.post.title,
+      postText: this.props.post.body,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -20,7 +21,7 @@ class EditPostForm extends React.Component {
   static propTypes = {
     onSubmitEdit: PropTypes.func.isRequired,
     onCancelEdit: PropTypes.func.isRequired,
-    post: PropTypes.object.isRequired    
+    post: PropTypes.object.isRequired
   }
 
   handleInputChange(event) {
@@ -36,7 +37,7 @@ class EditPostForm extends React.Component {
   render() {
     const { postText, postTitle } = this.state
     const { post, onSubmitEdit, onCancelEdit } = this.props
-    
+
     return (
         <Route render={(props) => {
           let postID = post.id
@@ -47,7 +48,7 @@ class EditPostForm extends React.Component {
 
           return (
           <form onSubmit={event=>onSubmitEdit(event, postID, postTitle, postText)}>
-            <h3>Edit Post<span style={{fontWeight:'400'}}> {title}</span></h3>
+            <h3>Edit<span style={{fontWeight:'400'}}> {title}</span></h3>
             <small>Category: {capitalize(category)}&nbsp;&nbsp;|&nbsp;&nbsp;Author: {capitalize(author)}</small>
 
 
