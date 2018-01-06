@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import SinglePost from './SinglePost'
 import CategoryNav from './CategoryNav'
+import SortToggle from './SortToggle'
 import PropTypes from 'prop-types';
 import sortBy from 'sort-by'
 import { Link } from 'react-router-dom'
@@ -21,17 +22,15 @@ class SingleCategory extends Component {
     sendUpEditPost: PropTypes.func.isRequired
   }
 
-  sortByDate = (event) => {
-    event.preventDefault()
+  sortByDate = (option) => {
     this.setState({
-      sortMethod: "-timestamp"
-    })
+      sortMethod: (option==0) ? 'timestamp' : '-timestamp'
+    })    
   }
 
-  sortByPop = (event) => {
-    event.preventDefault()
+  sortByPop = (option) => {
     this.setState({
-      sortMethod: "-voteScore"
+      sortMethod: (option==0) ? 'voteScore' : '-voteScore'      
     })
   }
 
@@ -50,14 +49,21 @@ class SingleCategory extends Component {
         {!viewingAll &&
           <CategoryNav categoryList={cats} />
         }
-
+        
         {(this.props.categoryPosts.length > 0)
           ?
           <div className="nav-options">
-            <span>Sort By | </span>
-            <a href="/" onClick={this.sortByDate}><strong>DATE</strong></a>&nbsp;|&nbsp;
-            <a href="/" onClick={this.sortByPop}><strong>POPULARITY</strong></a>
-          </div>
+            <span>Sort By&nbsp;&nbsp;&nbsp;</span>
+            <SortToggle 
+              isCurrent={sortMethod.replace('-','')==='timestamp'}
+              method='DATE'
+              onChangeSort={(updown)=>this.sortByDate(updown)} />
+            &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+            <SortToggle
+              isCurrent={sortMethod.replace('-','')==='voteScore'}
+              method='POPULARITY'
+              onChangeSort={(updown)=>this.sortByPop(updown)} />              
+          </div>          
           :
           <div className="no-posts">
             <em>No posts for this category</em>
